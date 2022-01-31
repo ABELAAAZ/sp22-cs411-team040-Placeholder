@@ -6,12 +6,12 @@
 | ----------- | ---------------------- |
 | TeamID      |         Team-040       |
 | TeamName    |        Placeholder     |
-| Captain     |   FirstName LastName   |
-| Captain     |      Captain-Email     |
-| Member1     |   FirstName LastName   |
-| Member1     |      Member2-Email     |
-| Member2     |   FirstName LastName   |
-| Member2     |      Member3-Email     |
+| Captain     |       Yanying Yu       |
+| Captain     | yanying6@illinois.edu  |
+| Member1     |   Bill Ho Nam          |
+| Member1     | bhwong3@illinois.edu   |
+| Member2     |   Jiajun Wang          |
+| Member2     |  jiajunw4@illinois.edu |
 | Member3     |      Nengyu Wang       |
 | Member3     | nengyuw2@illinois.edu  |
 
