@@ -1,4 +1,4 @@
-# Team040-Pokémon Trading Card system Placeholder
+# Team040-Pokémon Trading Card system-Team Placeholder
 
 ## Basic Information
 
