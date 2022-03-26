@@ -1,82 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <title>Loin in</title>
-    <a>{{ welcome }}</a>
+<!DOCTYPE html>
+<html>
+
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <title>用户登录</title>
+    <!-- 倒入本地的BOotstrap样式, 也可以倒入网络上的；
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/fontawesome-all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/slick-slider.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/fancybox.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/smartmenus.css">
+    <link rel="stylesheet" href="/static/bootstrap/style.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/color.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/responsive.css">-->
+    <link rel="icon" type="image/png" href="https://www.ymtricks.xyz/login-forms/images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
+
+	<style>
+        body {
+            background-image:url("//static/images/login-1.jpg") no-repeat;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+
+    </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="row">
-                <p>profile</p>
-            </div>
-            <div class="row">
-                <p>blind box</p>
-            </div>
-            <div class="row">
-                <p>resale card</p>
-            </div>
-            <nav id="main-nav">
-                                    <ul id="main-menu" class="sm sm-blue">
-                                        <li class="active"><a href="/first/index/"><h3>主页</h3></a></li>
-                                        <li class="megamenu-wrap"><a href="#"><h3>小镇地图</h3></a></li>
-                                        <li><a href="#"><h3>冬季滑雪</h3></a>
-                                            <ul>
-                                                <li><a href="/first/equip/" >雪具租赁</a></li>
-                                                <li><a href="#">教练预约</a>
-                                                    <ul>
-                                                        <li><a href="/first/coachdan/">单板教练</a>
-                                                        </li>
-                                                        <li><a href="player-medium-wlsb.html">双板教练</a>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="/first/orderdone/" >全部订单</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="#"><h3>小镇生活</h3></a>
-                                            <ul>
-                                                <li><a href="/first/bus/">班车预定</a>
-                                                </li>
-                                                <li><a href="#">餐饮娱乐</a>
-                                                    <ul>
-                                                        <li><a href="blog-large.html">餐饮</a></li>
-                                                        <li><a href="blog-large-wlsb.html">商店</a></li>
-                                                        <li><a href="blog-large-wrsb.html">娱乐设施</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="#">星级酒店</a>
-                                                    <ul>
-                                                        <li><a href="blog-detail.html">太舞酒店</a></li>
-                                                        <li><a href="blog-detail-waudio.html">威斯汀源宿</a></li>
-                                                        <li><a href="blog-detail-wvideo.html">凯悦酒店</a>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                 <li><a href="/first/xiaozhenorderdone/">班车订单</a>
-                                            </ul>
-                                        </li>
-                                        <li><a href="#"><h3>小镇新闻</h3></a>
-                                        </li>
-                                        <li><a href="contact-us.html"><h3>联系我们</h3></a></li>
-                                    </ul>
-                                </nav>
 
-        </div>
-        <div class="col-md-9">
+	<div>
+		<div class="container">
+			<div class="wrap-login100">
+				<div class="login100-pic " >
+					<img src="/static/images/login-1.jpg" alt="IMG" height=60%>
 
-                 <p>this is all cards</p>
+				</div>
 
-        </div>
+				<form class="login100-form validate-form" method="post">
+					 {% if message %}
+                <div class="alert alert-warning">{{ message }}</div>
+                   {% endif %}
 
-    </div>
-    </div>
-</div>
+            {% csrf_token %}
+					<span class="login100-form-title">
+						 SIGN IN
+					</span>
+
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="username" placeholder="username">
+
+
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate = "Password is required">
+						<input class="input100" type="password" name="password" placeholder="Password">
+						<span class="focus-input100"></span>
+
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" type="submit">
+							Login
+						</button>
+					</div>
+
+
+					<div class="text-center p-t-136">
+						<a class="txt2" href="#">
+							Create your Account
+							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+
+<!--===============================================================================================-->
+	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/vendor/bootstrap/js/popper.js"></script>
+	<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/vendor/tilt/tilt.jquery.min.js"></script>
+
+<!--===============================================================================================-->
+	<script src="/static/js/main.js"></script>
+
+
+<!--导入外部的js样式;-->
+<!--<script href="js/bootstrap.js"></script>-->
+<!--<script href="js/npm.js"></script>-->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<!--导入jQuery-->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js">
+</script>
+
 </body>
 </html>

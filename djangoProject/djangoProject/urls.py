@@ -16,7 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from Pokemon import views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from django.contrib import staticfiles
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login),
+    path('mainpage/', views.mainpage),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
