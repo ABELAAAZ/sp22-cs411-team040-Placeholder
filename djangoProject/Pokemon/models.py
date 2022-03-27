@@ -4,7 +4,8 @@ class Blindbox(models.Model):
     boxid = models.IntegerField(db_column='boxID', primary_key=True)  # Field name made lowercase.
     title = models.CharField(max_length=50)
     b_price = models.DecimalField(max_digits=10, decimal_places=2)
-
+    description= models.CharField(max_length=500,null=True)
+    b_pic = models.CharField(max_length=500,null=True)
     class Meta:
         managed = True
         db_table = 'blindbox'
