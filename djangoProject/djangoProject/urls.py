@@ -19,10 +19,13 @@ from Pokemon import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.contrib import staticfiles
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login),
     path('mainpage/', views.mainpage),
+    path('logout/', views.logout),
+    path('signup/', views.signup),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
