@@ -26,6 +26,8 @@ urlpatterns = [
     path('mainpage/', views.mainpage),
     path('logout/', views.logout),
     path('signup/', views.signup),
+    path('mypokemon/', views.mypokemon),
+    path('boxhistory/', views.boxhistory),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
