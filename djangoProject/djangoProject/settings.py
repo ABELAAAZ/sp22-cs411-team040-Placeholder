@@ -79,10 +79,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # 默认
          'NAME': 'teamplaceholder',  # 连接的数据库
-         'HOST': '127.0.0.1',  # mysql的ip地址
+         'HOST': '35.225.86.28',  # mysql的ip地址
          'PORT': 3306,  # mysql的端口
          'USER': 'root',  # mysql的用户名
-         'PASSWORD': 'Yyy19980122' , # mysql的密码
+         'PASSWORD': 'project411',  # mysql的密码
 }
 
 }

@@ -45,11 +45,13 @@ def logout(request):
 def mainpage(request):
     if request.session.get('is_login', None):
         cursor = connection.cursor()
-        cursor.execute("select * from Blindbox")
+        cursor.execute("select * from BlindBox")
         blindboxlist = cursor.fetchall()
         return render(request, 'mainpage.html',{'blindboxlist':blindboxlist})
     else:
         return redirect('/login/')
+
+
 
 
 def signup(request):
