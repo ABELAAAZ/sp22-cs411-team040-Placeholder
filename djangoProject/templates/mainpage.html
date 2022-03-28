@@ -148,16 +148,17 @@
                                         <span class="sign">$</span>
                                         <h6> {{blindbox.3}}</h6>
                                         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
-                                                data-target="#myModal">Purchase
+                                                data-target=#{{blindbox.0}}>Purchase
                                         </button>
-                                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+                                        <!-- modal window -->
+                                        <div class="modal fade " id={{blindbox.0}} tabindex="-1" role="dialog"
                                              aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal"
                                                                 aria-hidden="true">
-                                                            &times;
+
                                                         </button>
                                                         <h4 class="modal-title" id="myModalLabel">
                                                             you want to buy one?
@@ -167,13 +168,11 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal" onclick="">No
-
-
                                                         </button>
                                                         <button type="button"
-                                                                class="btn btn-primary"
-                                                                onclick="buyonebox(1)">
-
+                                                                class="btn btn-primary" data-dismiss="modal"
+                                                                onclick="buyonebox({{blindbox.0}})">
+                                                             yes
                                                         </button>
                                                     </div>
                                                 </div><!-- /.modal-content -->
@@ -217,12 +216,11 @@
         })
     }
 </script>
+<!--
 <script src="/static/bootstrap/js/jquery.js"></script>
 <script src="/static/js/main.js"></script>
 <script src="/static/bootstrap/js/jquery-3.2.1.min.js"></script>
 
-<script href="js/bootstrap.js"></script>
-<script href="js/npm.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/bootstrap/js/popper.min.js"></script>
 <script src="/static/bootstrap/js/jquery.js"></script>
@@ -234,13 +232,16 @@
 <script src="/static/bootstrap/js/smartmenus.min.js"></script>
 <script src="/static/bootstrap/js/progressbar.js"></script>
 <script src="/static/bootstrap/js/jquery.countdown.min.js"></script>
-<script src="/static/bootstrap/js/functions.js"></script>
+<script src="/static/bootstrap/js/functions.js"></script>   -->
 
-<script src="/static/bootstrap/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<script src="https://cdn.bootcss.com/moment.js/2.22.1/moment-with-locales.min.js"></script>
-<script src="/static/bootstrap/js/bootstrap-datetimepicker.js"></script>
-<script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
 
+<script src="/static/bootstrap/js/jquery.js"></script>
+<script src="/static/js/main.js"></script>
+
+<script href="js/bootstrap.js"></script>
+<script href="js/npm.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/bootstrap/js/popper.min.js"></script>
 
 
 </body>

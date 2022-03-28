@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import HttpResponse
+import datetime
 
 def login(request):
     if request.session.get('is_login', None):
@@ -105,11 +106,18 @@ def boxhistory(request):
         return redirect('/login/')
 
 
-def buybox(request, boxid):
-    print(boxid)
-
 def buyonebox(request):
     boxid = request.POST.get('boxid')
+    userid=request.session.get('userID',None)
+    today=datetime.date.today()
+    paydate=today.strftime('%y%m%d')
+    cursor = connection.cursor()
+    print('go')
+    cursor.execute("select b_price from BlindBox where boxID =%s",boxid)
+    price=cursor.fetchone()
+    price=price[0]
+    print(userid,int(boxid),paydate,price)
+    cursor.execute(
+        "Insert into BoxOrder (userID,boxID,pay_datetime,pay_amount) values(%s,%s,%s,%s);",[userid,int(boxid),paydate,price])
 
-    print(boxid)
-    return HttpResponse(boxid)
+    return HttpResponse('Congradulation! purchase successfully')
