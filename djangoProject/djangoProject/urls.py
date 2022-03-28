@@ -28,6 +28,9 @@ urlpatterns = [
     path('signup/', views.signup),
     path('mypokemon/', views.mypokemon),
     path('boxhistory/', views.boxhistory),
+    path('buyonebox/', views.buyonebox),
+  #  path('/buybox/boxid/', views.buybox, name='buybox'),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
