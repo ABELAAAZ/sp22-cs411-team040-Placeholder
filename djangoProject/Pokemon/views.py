@@ -1,4 +1,6 @@
 # Create your views here.
+import random
+
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import HttpResponse
@@ -112,11 +114,49 @@ def buyonebox(request):
     today=datetime.date.today()
     paydate=today.strftime('%y%m%d')
     cursor = connection.cursor()
-    print('go')
+    #print('go')
     cursor.execute("select b_price from BlindBox where boxID =%s",boxid)
     price=cursor.fetchone()
     price=price[0]
-    print(userid,int(boxid),paydate,price)
+    #print(userid,int(boxid),paydate,price)
+    cursor.execute("select title, rarity, prob from BlindBox natural join Probability where boxID = %s", boxid)
+    box_pro = []
+    for i in range(4):
+        box_infor = cursor.fetchone()
+        box_pro.append(box_infor[2])
+    print(box_pro)
+    for i in range(5):
+        m = random.randint(1,1000)
+        if box_infor[0] == 'Fire' or box_infor[0] == 'Water' or box_infor[0] == 'Grass':
+            if m <= box_pro[0] * 1000:
+                cursor.execute("select cardNo from Card where type = %s and rarity = %s order by Rand() limit 1",[box_infor[0],'A'])
+                cardNo = cursor.fetchone()
+                cardNo = cardNo[0]
+                cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",[cardNo,userid,'owned',0.0] )
+            elif m <= (box_pro[0]+box_pro[1])*1000:
+                cursor.execute("select cardNo from Card where type = %s and rarity = %s order by Rand() limit 1",
+                               [box_infor[0], 'B'])
+                cardNo = cursor.fetchone()
+                cardNo = cardNo[0]
+                cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
+                               [cardNo, userid, 'owned', 0.0])
+            elif m <= (box_pro[0]+box_pro[1]+box_pro[2])*1000:
+                cursor.execute("select cardNo from Card where type = %s and rarity = %s order by Rand() limit 1",
+                               [box_infor[0], 'C'])
+                cardNo = cursor.fetchone();
+                cardNo = cardNo[0]
+                cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
+                               [cardNo, userid, 'owned', 0.0])
+            else:
+                cursor.execute("select cardNo from Card where type = %s and rarity = %s order by Rand() limit 1",
+                               [box_infor[0], 'D'])
+                cardNo = cursor.fetchone()
+                cardNo = cardNo[0]
+                cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
+                               [cardNo, userid, 'owned', 0.0])
+
+
+
     cursor.execute(
         "Insert into BoxOrder (userID,boxID,pay_datetime,pay_amount) values(%s,%s,%s,%s);",[userid,int(boxid),paydate,price])
 
