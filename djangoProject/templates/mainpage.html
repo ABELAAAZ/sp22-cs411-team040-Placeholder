@@ -251,8 +251,7 @@
             success: function (data) {
 
                 var opencard = eval(data);
-                var message = "Lucky, Now you have  \rkjh " + opencard[0][0] + "  \n and  \\n" + opencard[1][0]
-                //  window.alert("Lucky, Now you have \u000a"+opencard[0][0]+"\u000a"+opencard[1][0])
+                $("#showfivecard tbody").html("");
                 for (var i = 0; i < opencard.length; i++) {
                     $("tbody").append("<tr>"
                         + "<td>" + opencard[i][0] + "</td>"
@@ -261,7 +260,6 @@
                         + "</tr>");
                 }
                 $('#showfivecard').modal('show');
-
             },
             error: function (e) {
                 console.log("there is an error");
