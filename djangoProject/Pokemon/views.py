@@ -160,9 +160,9 @@ def buyonebox(request):
     cursor.execute(
         "Insert into BoxOrder (userID,boxID,pay_datetime,pay_amount) values(%s,%s,%s,%s);",
         [userid, int(boxid), paydate, price])
-    returnlist = [['Manaphy',
+    returnlist = [['Manaphy','D'
                    'https://content.tcgcollector.com/content/images/b6/bc/e2/b6bce232b85a26fd67ef2be7e0d07a40790ebe5ccb047ab41a8d6102689211f3.jpg'],
-                  ['Noivern',
+                  ['Noivern','D'
                    'https://content.tcgcollector.com/content/images/b8/d1/3b/b8d13bc33436898e384b505fbade923c7604701fac5335900d876ad7cdb78090.jpg']]
     return HttpResponse(json.dumps(returnlist))
 
