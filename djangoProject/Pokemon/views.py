@@ -1,6 +1,6 @@
 # Create your views here.
 import random
-
+import json
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import HttpResponse
@@ -160,8 +160,11 @@ def buyonebox(request):
     cursor.execute(
         "Insert into BoxOrder (userID,boxID,pay_datetime,pay_amount) values(%s,%s,%s,%s);",
         [userid, int(boxid), paydate, price])
-
-    return HttpResponse('Congradulation! purchase successfully')
+    returnlist = [['Manaphy',
+                   'https://content.tcgcollector.com/content/images/b6/bc/e2/b6bce232b85a26fd67ef2be7e0d07a40790ebe5ccb047ab41a8d6102689211f3.jpg'],
+                  ['Noivern',
+                   'https://content.tcgcollector.com/content/images/b8/d1/3b/b8d13bc33436898e384b505fbade923c7604701fac5335900d876ad7cdb78090.jpg']]
+    return HttpResponse(json.dumps(returnlist))
 
 
 def resalepage(request):
@@ -174,15 +177,13 @@ def resalepage(request):
         return redirect('/login/')
 
 
-
-
 def resalehistory(request):
     if request.session.get('is_login', None):
         cursor = connection.cursor()
         userID = request.session.get('userID', None)
         cursor.execute(
-           #TODO
-            )
+            # TODO
+        )
         boxhistorylist = cursor.fetchall()
         return render(request, 'resalehistory.html', {})
     else:
