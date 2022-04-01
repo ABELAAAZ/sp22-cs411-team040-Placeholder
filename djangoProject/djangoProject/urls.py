@@ -24,10 +24,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login),
     path('mainpage/', views.mainpage),
+    path('resalepage/', views.resalepage),
     path('logout/', views.logout),
     path('signup/', views.signup),
     path('mypokemon/', views.mypokemon),
     path('boxhistory/', views.boxhistory),
+    path('resalehistory/', views.resalehistory),
     path('buyonebox/', views.buyonebox),
 
 ]
