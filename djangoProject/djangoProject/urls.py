@@ -31,7 +31,7 @@ urlpatterns = [
     path('boxhistory/', views.boxhistory),
     path('resalehistory/', views.resalehistory),
     path('buyonebox/', views.buyonebox),
-
+    path('modifycard/', views.modifycard),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

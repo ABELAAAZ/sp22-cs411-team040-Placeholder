@@ -86,7 +86,7 @@ def mypokemon(request):
     if request.session.get('is_login', None):
         cursor = connection.cursor()
         userID = request.session.get('userID', None)
-        cursor.execute("select c_name,rarity, img,type,status from Card natural join OwnedCard where userID =%s",
+        cursor.execute("select c_name,rarity, img,type,status,cardID from Card natural join OwnedCard where userID =%s",
                        userID)
         cardlist = cursor.fetchall()
         return render(request, 'mypokemon.html', {'cardlist': cardlist})
@@ -129,72 +129,73 @@ def buyonebox(request):
         m = random.randint(1, 1000)
         if box_infor[0] == 'Fire' or box_infor[0] == 'Water' or box_infor[0] == 'Grass':
             if m <= box_pro[0] * 1000:
-                cursor.execute("select cardNo,img from Card where type = %s and rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where type = %s and rarity = %s order by Rand() limit 1",
                                [box_infor[0], 'A'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
+
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo,'A',card_infor[1]])
+                returnlist.append([card_infor[2],'A',card_infor[1]])
 
             elif m <= (box_pro[0] + box_pro[1]) * 1000:
-                cursor.execute("select cardNo,img from Card where type = %s and rarity = %s order by Rand() limit 1",
+                cursor.execute("selectcardNo,img ,c_name from Card where type = %s and rarity = %s order by Rand() limit 1",
                                [box_infor[0], 'B'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo, 'B', card_infor[1]])
+                returnlist.append([card_infor[2], 'B', card_infor[1]])
             elif m <= (box_pro[0] + box_pro[1] + box_pro[2]) * 1000:
-                cursor.execute("select cardNo, img from Card where type = %s and rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where type = %s and rarity = %s order by Rand() limit 1",
                                [box_infor[0], 'C'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo, 'C', card_infor[1]])
+                returnlist.append([card_infor[2], 'C', card_infor[1]])
             else:
-                cursor.execute("select cardNo,img from Card where type = %s and rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where type = %s and rarity = %s order by Rand() limit 1",
                                [box_infor[0], 'D'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo, 'D', card_infor[1]])
+                returnlist.append([card_infor[2], 'D', card_infor[1]])
         else:
             if m <= box_pro[0] * 1000:
-                cursor.execute("select cardNo,img from Card where rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where rarity = %s order by Rand() limit 1",
                                ['A'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo,'A',card_infor[1]])
+                returnlist.append([card_infor[2],'A',card_infor[1]])
 
             elif m <= (box_pro[0] + box_pro[1]) * 1000:
-                cursor.execute("select cardNo,img from Card where rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where rarity = %s order by Rand() limit 1",
                                ['B'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo, 'B', card_infor[1]])
+                returnlist.append([card_infor[2], 'B', card_infor[1]])
             elif m <= (box_pro[0] + box_pro[1] + box_pro[2]) * 1000:
-                cursor.execute("select cardNo, img from Card where rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where rarity = %s order by Rand() limit 1",
                                ['C'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo, 'C', card_infor[1]])
+                returnlist.append([card_infor[2], 'C', card_infor[1]])
             else:
-                cursor.execute("select cardNo,img from Card where rarity = %s order by Rand() limit 1",
+                cursor.execute("select cardNo,img ,c_name from Card where rarity = %s order by Rand() limit 1",
                                ['D'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
                 cursor.execute("Insert into OwnedCard (cardNo,userID,status,c_price) values(%s,%s,%s,%s)",
                                [cardNo, userid, 'owned', 0.0])
-                returnlist.append([cardNo, 'D', card_infor[1]])
+                returnlist.append([card_infor[2], 'D', card_infor[1]])
 
     cursor.execute(
         "Insert into BoxOrder (userID,boxID,pay_datetime,pay_amount) values(%s,%s,%s,%s);",
@@ -227,3 +228,9 @@ def resalehistory(request):
         return render(request, 'resalehistory.html', {})
     else:
         return redirect('/login/')
+
+
+
+def modifystatus(request):
+    #TODO
+    return

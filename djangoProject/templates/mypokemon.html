@@ -129,22 +129,66 @@
                                         <img src={{card.2}} alt="Product">
                                     </div>
                                     <div class="col-md-6">
-                                        <h1 style="color: orangered" >
-                                             {{card.0}}
+                                        <h1 style="color: orangered">
+                                            {{card.0}}
                                         </h1>
                                         <h2 style="color: darkred">
                                             rarity : {{card.1}}
                                         </h2>
-                                        <h3 >
+                                        <h3>
                                             card type:{{card.3}}
                                         </h3>
 
-                                        <h3 >
+                                        <h3>
                                             status:{{card.4}}
                                         </h3>
-
                                         <h6></h6>
-                                        <button type="button" class="btn btn-primary btn-lg">Modify status</button>
+                                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
+                                                data-target=#{{card.5}}>Modify status
+                                        </button>
+                                        <!-- Modal window: modify status -->
+                                        <div class="modal fade " id={{card.5}} tabindex="-1" role="dialog"
+                                             aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">
+
+                                                        </button>
+                                                        <h4 class="modal-title">
+                                                            Now status:{{card.4}}</h4>
+                                                        <h4 class="modal-title">Change the card's status?
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post" action="/modifycard/">
+                                                            {% csrf_token %}
+                                                            <select id="status" onchange="statuschange()">
+                                                                <option selected="selected">Choose one status</option>
+                                                                <option value="owned">owned</option>
+                                                                <option value="selling">selling</option>
+                                                            </select>
+                                                            <div id="enterprice"
+                                                                 data-validate="Price is required"
+                                                                 style="display: none;">
+                                                                <input
+                                                                        placeholder="Set the selling price">
+                                                            </div>
+
+
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                        class="btn btn-primary">
+                                                                    Change
+                                                                </button>
+                                                            </div>
+                                                        </form>
+
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal -->
+                                        </div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -161,6 +205,24 @@
 </div>
 
 </div>
+
+
+<script>
+    function statuschange() {
+
+        var status = document.getElementById("status").value;
+        var enterprice = document.getElementById("enterprice");
+
+
+        if (status == 'selling') {
+
+            enterprice.style.display = "";
+        } else {
+            enterprice.style.display = "none";
+        }
+    }
+</script>
+
 
 <script src="/static/bootstrap/js/jquery.js"></script>
 <script src="/static/js/main.js"></script>
