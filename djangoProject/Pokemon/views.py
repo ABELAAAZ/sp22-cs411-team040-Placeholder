@@ -40,7 +40,6 @@ def login(request):
         else:
             return render(request, 'login.html')
 
-
 def logout(request):
     if request.session.get('is_login', None):
         request.session.flush()
@@ -95,6 +94,50 @@ def mypokemon(request):
     else:
         return redirect('/login/')
 
+def checkbox(request):
+    if request.method == "POST":
+        cursor = connection.cursor()
+        typefilter = request.POST.get('typefilter', None)
+        price = request.POST.get('price', None)
+        type = request.POST.get('type', None)
+        if price == 'less40':
+            if typefilter == 'alltypes':
+                cursor.execute(
+                    "select * from BlindBox where b_price < 40"
+                )
+            else:
+                if type == 'Fire':
+                    cursor.execute(
+                        "select * from BlindBox where (b_price < 40 and title = 'Fire')"
+                    )
+                elif type == 'Water':
+                    cursor.execute(
+                        "select * from BlindBox where (b_price < 40 and title = 'Water')"
+                    )
+                else:
+                    cursor.execute(
+                        "select * from BlindBox where (b_price < 40 and title = 'Grass')"
+                    )
+        else:
+            if typefilter == 'alltypes':
+                cursor.execute(
+                    "select * from BlindBox where b_price >= 40"
+                )
+            else:
+                if type == 'Fire':
+                    cursor.execute(
+                        "select * from BlindBox where (b_price >= 40 and title = 'Fire')"
+                    )
+                elif type == 'Water':
+                    cursor.execute(
+                        "select * from BlindBox where (b_price >= 40 and title = 'Water')"
+                    )
+                else:
+                    cursor.execute(
+                        "select * from BlindBox where (b_price >= 40 and title = 'Grass')"
+                    )
+        boxlist = cursor.fetchall()
+        return render(request, 'mainpage.html', {'blindboxlist': boxlist})
 
 def boxhistory(request):
     if request.session.get('is_login', None):

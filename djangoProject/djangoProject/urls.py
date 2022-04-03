@@ -34,6 +34,7 @@ urlpatterns = [
     path('modifycard/', views.modifycard),
     path('buyonecard/', views.buyonecard),
     path('showpricetrend/', views.showpricetrend),
+    path('checkbox/', views.checkbox),
     path('deleteboxhistory/', views.deleteboxhistory),
     path('pricecheck/', views.pricecheck),
     path('adminpage/', views.adminpage),
