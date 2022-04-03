@@ -243,10 +243,12 @@ def buyonecard(request):
     cursor = connection.cursor()
     cursor.execute("select * from OwnedCard where cardID =%s", cardID)
     card = cursor.fetchone()
-    cursor.execute("Insert into ResaleOrder (sellerID,buyerID,cardID,trade_amount,trade_datetime) values(%s,%s,%s,%s,%s)",
-                   [card[2], buyer, cardID, card[4], paydate])
-    cursor.execute("update OwnedCard set status = %s, c_price = %s, userID = %s where cardID = %s", ['owned', 0, buyer, cardID])
-    return
+    cursor.execute(
+        "Insert into ResaleOrder (sellerID,buyerID,cardID,trade_amount,trade_datetime) values(%s,%s,%s,%s,%s)",
+        [card[2], buyer, cardID, card[4], paydate])
+    cursor.execute("update OwnedCard set status = %s, c_price = %s, userID = %s where cardID = %s",
+                   ['owned', 0, buyer, cardID])
+    return HttpResponse(json.dumps(cardID))
 
 
 def resalehistory(request):
@@ -254,10 +256,11 @@ def resalehistory(request):
         cursor = connection.cursor()
         userID = request.session.get('userID', None)
         cursor.execute(
-            # TODO
+            "select r_orderID, c_name, rarity, b.u_name, y.u_name, trade_amount, trade_datetime from (select r_orderID, c_name, rarity, u_name, buyerID, trade_amount, trade_datetime from (select r_orderID, c_name, rarity, sellerID, buyerID, trade_amount, trade_datetime from ResaleOrder natural join OwnedCard natural join Card where buyerID = %s or sellerID = %s) a left join User x on a.sellerID = x.userID) b left join User y on b.buyerID = y.userID",
+            [userID, userID]
         )
-        boxhistorylist = cursor.fetchall()
-        return render(request, 'resalehistory.html', {})
+        resalehistorylist = cursor.fetchall()
+        return render(request, 'resalehistory.html', {'resalehistorylist': resalehistorylist})
     else:
         return redirect('/login/')
 
