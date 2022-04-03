@@ -38,7 +38,7 @@
             <div>
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
-                        <a  class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             Blind Box<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
@@ -47,7 +47,7 @@
                             <li><a href="/boxhistory/">Order history</a></li>
                         </ul>
                     </li>
-                    <li><a href="/mypokemon/" class="dropdown-toggle">My Pokemon</a></li>
+                    <li><a class="dropdown-toggle">My Pokemon</a></li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown">
                             Resale Card <b class="caret"></b>
@@ -164,18 +164,17 @@
                                                     <div class="modal-body">
                                                         <form method="post" action="/modifycard/">
                                                             {% csrf_token %}
-                                                            <input type="hidden"  name="cardID" value="{{card.5}}">
-                                                            <select id="status" onchange="statuschange()">
+                                                            <input type="hidden" id="cardID{{card.5}}" name="cardID" value="{{card.5}}">
+                                                            <select id="status{{card.5}}" name = 'status' onchange="statuschange({{card.5}})">
                                                                 <option selected="selected">Choose one status</option>
                                                                 <option value="owned">owned</option>
                                                                 <option value="selling">selling</option>
                                                             </select>
-                                                            <div id="enterprice"
+                                                            <div id="enterprice{{card.5}}"
                                                                  data-validate="Price is required"
                                                                  style="display: none;">
-                                                                <input
+                                                                <input name = 'price'
                                                                         placeholder="Set the selling price">
-
                                                             </div>
 
 
@@ -210,11 +209,11 @@
 
 
 <script>
-    function statuschange() {
-
-        var status = document.getElementById("status").value;
-        var enterprice = document.getElementById("enterprice");
-
+    function statuschange(thisone) {
+        var cardID=thisone
+        var status = document.getElementById("status"+cardID).value;
+        var enterprice = document.getElementById("enterprice"+cardID);
+        console.log('the status is' +status)
 
         if (status == 'selling') {
 
