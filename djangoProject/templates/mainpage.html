@@ -96,7 +96,7 @@
                                 <div class="shop-widget mb--40">
 
                                     <h3 class="widget-title mb--25">Category</h3>
-                                    <form method="post" action="/checkbox/">
+                                    <form method="POST" action="/checkbox/">
 
                                         {% csrf_token %}
                                         <div><label style="color: black">Price</label>
@@ -125,7 +125,8 @@
                             <div class="shop-toolbar mb--50">
                                 <div class="row align-items-center">
                                     <div class="col-md-5 mb-sm--30 mb-xs--10">
-                                        <form class="navbar-form" role="search" action="/searchbox/">
+                                        <form class="navbar-form" role="search"  method="POST" action="/searchbox/">
+                                            {% csrf_token %}
                                             <div class="form-group">
                                                 <input type="text" class=" form-control input-lg" name="keyword"
                                                        placeholder="Keyword">

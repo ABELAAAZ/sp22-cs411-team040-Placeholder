@@ -267,15 +267,27 @@ def resalehistory(request):
         return redirect('/login/')
 
 
-
 def showpricetrend(request):
     #TODO
     trendlist=[[20220202,10],[20220218,9],[20220401,15]]
     return HttpResponse(json.dumps(trendlist))
 
+
 def deleteboxhistory(request):
     orderID = request.POST.get('orderID')
     cursor = connection.cursor()
     cursor.execute(
-        " delete from BoxOrder where b_orderID  = %s",orderID)
+        " delete from BoxOrder where b_orderID  = %s", orderID)
     return redirect('/boxhistory/')
+
+
+def searchbox(request):
+    if request.method == "POST":
+        keyword = request.POST.get('keyword', None)
+        cursor = connection.cursor()
+        keyword = "%" + str(keyword) + "%"
+        print(keyword)
+        cursor.execute("select * from BlindBox where title like %s", keyword)
+        searchedcard = cursor.fetchall()
+        print(searchedcard)
+    return render(request, 'mainpage.html', {'blindboxlist': searchedcard})
