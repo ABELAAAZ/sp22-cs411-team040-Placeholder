@@ -272,3 +272,8 @@ def showpricetrend(request):
     return HttpResponse(json.dumps(trendlist))
 
 def deleteboxhistory(request):
+    orderID = request.POST.get('orderID')
+    cursor = connection.cursor()
+    cursor.execute(
+        " delete from BoxOrder where b_orderID  = %s",orderID)
+    return redirect('/boxhistory/')

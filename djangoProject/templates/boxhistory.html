@@ -105,7 +105,11 @@
                                 <td>{{history.1}}</td>
                                 <td>{{history.2}}</td>
                                 <td>{{history.3}}</td>
-                                <td><button type="button" class="btn btn-primary btn-lg" action="/deleteboxhistory/">delete</button></td>
+                                <form method="post" action="/deleteboxhistory/">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="history{{history.0}}" name="orderID" value="{{history.0}}">
+                                    <td><button type="submit" class="btn btn-primary btn-lg" >delete</button></td>
+                                </form>
                             </tr>
                              {% endfor %}
                             </tbody>
