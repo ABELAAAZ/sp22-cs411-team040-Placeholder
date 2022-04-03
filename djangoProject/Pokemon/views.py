@@ -267,17 +267,17 @@ def resalehistory(request):
         return redirect('/login/')
 
 
-def showpricetrend(request):
-    #TODO
-    trendlist=[[20220202,10],[20220218,9],[20220401,15]]
-    return HttpResponse(json.dumps(trendlist))
 
+def showpricetrend(request):
+    # TODO
+    trendlist = [[20220202, 10], [20220218, 9], [20220401, 15]]
+    return HttpResponse(json.dumps(trendlist))
 
 def deleteboxhistory(request):
     orderID = request.POST.get('orderID')
     cursor = connection.cursor()
     cursor.execute(
-        " delete from BoxOrder where b_orderID  = %s", orderID)
+        " delete from BoxOrder where b_orderID  = %s",orderID)
     return redirect('/boxhistory/')
 
 
@@ -291,3 +291,20 @@ def searchbox(request):
         searchedcard = cursor.fetchall()
         print(searchedcard)
     return render(request, 'mainpage.html', {'blindboxlist': searchedcard})
+
+
+def pricecheck(request):
+    if request.session.get('is_login', None):
+
+        return render(request, 'pricecheck.html')
+    else:
+        return redirect('/login/')
+
+
+def adminpage(request):
+    # todo 显示一个default的table表
+    return render(request, 'adminpage.html')
+
+
+def adminsearch(request):
+    return 1
