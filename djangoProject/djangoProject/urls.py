@@ -40,6 +40,8 @@ urlpatterns = [
     path('adminpage/', views.adminpage),
     path('adminsearch/', views.adminsearch),
     path('searchbox/', views.searchbox),
+    path('checkmycard/', views.checkmycard),
+    path('checkresalecard/', views.checkresalecard),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

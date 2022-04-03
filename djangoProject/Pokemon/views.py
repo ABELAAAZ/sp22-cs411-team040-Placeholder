@@ -362,3 +362,12 @@ def adminsearch(request):
         result = cursor.fetchall()
     return render(request, 'adminpage.html', {'result': result})
 
+
+def checkmycard(request):
+    #todo
+    return 1
+
+
+def checkresalecard(request):
+    # todo
+    return 1

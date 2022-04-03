@@ -98,12 +98,43 @@
                                 <div class="shop-widget mb--40">
 
                                     <h3 class="widget-title mb--25">Category</h3>
-                                    <form>
-                                        <select class="product-ordering__select nice-select">
-                                            <option value="0">Show all</option>
-                                            <option value="1">By rarity</option>
-                                            <option value="1">By pokemon type</option>
+                                    <form method="POST" action="/checkmycard/">
+                                        {% csrf_token %}
+
+                                        choose rarity
+                                        <select id="rarityfilter" name="rarityfilter" onchange="raritychange()">
+                                            <option value="allrarity">ALL</option>
+                                            <option value="choose">CHOOSE ONE OR MORE</option>
                                         </select>
+                                        <div id="chooserarity" style="display: none;">
+                                            <input type="checkbox" name="type" value="A"/>A
+                                            <input type="checkbox" name="type" value="B"/>B
+                                            <input type="checkbox" name="type" value="C"/>C
+                                            <input type="checkbox" name="type" value="D"/>D
+                                        </div>
+
+                                        choose card type
+                                        <select id="typefilter" name="typefilter" onchange="typechange()">
+                                            <option value="alltypes">ALL</option>
+                                            <option value="choose">CHOOSE ONE OR MORE</option>
+                                        </select>
+                                        <div id="choosetype" style="display: none;">
+                                            <input type="checkbox" name="type" value="Fire"/>Fire
+                                            <input type="checkbox" name="type" value="Water"/>Water
+                                            <input type="checkbox" name="type" value="Grass"/>Grass
+                                        </div>
+
+                                        choose status
+                                        <select id="statusfilter1" name="statusfilter1" onchange="statusfilter()">
+                                            <option value="allstatus">ALL</option>
+                                            <option value="choose">CHOOSE ONE OR MORE</option>
+                                        </select>
+                                        <div id="choosestatus" style="display: none;">
+                                            <input type="checkbox" name="type" value="owned"/>Owned
+                                            <input type="checkbox" name="type" value="selling"/>Selling
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-lg">filter</button>
                                     </form>
                                 </div>
 
@@ -166,8 +197,10 @@
                                                     <div class="modal-body">
                                                         <form method="post" action="/modifycard/">
                                                             {% csrf_token %}
-                                                            <input type="hidden" id="cardID{{card.5}}" name="cardID" value="{{card.5}}">
-                                                            <select id="status{{card.5}}" name = 'status' onchange="statuschange({{card.5}})">
+                                                            <input type="hidden" id="cardID{{card.5}}" name="cardID"
+                                                                   value="{{card.5}}">
+                                                            <select id="status{{card.5}}" name='status'
+                                                                    onchange="statuschange({{card.5}})">
                                                                 <option selected="selected">Choose one status</option>
                                                                 <option value="owned">owned</option>
                                                                 <option value="selling">selling</option>
@@ -175,11 +208,9 @@
                                                             <div id="enterprice{{card.5}}"
                                                                  data-validate="Price is required"
                                                                  style="display: none;">
-                                                                <input name = 'price'
-                                                                        placeholder="Set the selling price">
+                                                                <input name='price'
+                                                                       placeholder="Set the selling price">
                                                             </div>
-
-
                                                             <div class="modal-footer">
                                                                 <button type="submit"
                                                                         class="btn btn-primary">
@@ -208,13 +239,49 @@
 
 </div>
 
+<script>
+    function raritychange() {
+        var rarityfilter = document.getElementById("rarityfilter").value;
+        var chooserarity = document.getElementById("chooserarity");
+        if (rarityfilter == 'choose') {
+
+            chooserarity.style.display = "";
+        } else {
+            chooserarity.style.display = "none";
+        }
+    }
+</script>
+<script>
+    function typechange() {
+        var typefilter = document.getElementById("typefilter").value;
+        var choosetype = document.getElementById("choosetype");
+        if (typefilter == 'choose') {
+            choosetype.style.display = "";
+        } else {
+            choosetype.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    function statusfilter() {
+        var status = document.getElementById("statusfilter1").value;
+        var choosestatus = document.getElementById("choosestatus");
+        if (status == 'choose') {
+            choosestatus.style.display = "";
+        } else {
+            choosestatus.style.display = "none";
+        }
+    }
+</script>
+
 
 <script>
     function statuschange(thisone) {
-        var cardID=thisone
-        var status = document.getElementById("status"+cardID).value;
-        var enterprice = document.getElementById("enterprice"+cardID);
-        console.log('the status is' +status)
+        var cardID = thisone
+        var status = document.getElementById("status" + cardID).value;
+        var enterprice = document.getElementById("enterprice" + cardID);
+        console.log('the status is' + status)
 
         if (status == 'selling') {
 

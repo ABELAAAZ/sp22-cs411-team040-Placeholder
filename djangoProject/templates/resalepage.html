@@ -98,23 +98,31 @@
                                 <div class="shop-widget mb--40">
 
                                     <h3 class="widget-title mb--25">Category</h3>
-                                    <form>
-                                        <select class="product-ordering__select nice-select">
-                                            <option value="0">Show all</option>
-                                            <option value="1">By rarity</option>
-                                            <option value="1">By pokemon type</option>
-                                        </select>
-                                        <div><label style="color: black">Price</label>
-                                            <input type="radio" name="price" value="<40>"/><$40
-                                            <input type="radio" name="price" value=">=40"/>>=$40
-                                        </div>
-                                        <div><label style="color: black">Type</label>
-                                            <input type="checkbox" name="type" value="Fire"/>Fire
-                                            <input type="checkbox" name="type" value="Water"/>Water
-                                            <input type="checkbox" name="type" value="Grass"/>Grass
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-lg">filter</button>
+                                    <form method="POST" action="/checkresalecard/">
+                                        {% csrf_token %}
 
+                                        choose rarity
+                                        <select id="rarityfilter" name="rarityfilter" onchange="raritychange()">
+                                            <option value="allrarity">ALL</option>
+                                            <option value="choose">CHOOSE ONE OR MORE</option>
+                                        </select>
+                                        <div id="chooserarity" style="display: none;">
+                                            <input type="checkbox" name="type" value="A"/>A
+                                            <input type="checkbox" name="type" value="B"/>B
+                                            <input type="checkbox" name="type" value="C"/>C
+                                            <input type="checkbox" name="type" value="D"/>D
+                                        </div>
+                                        <div class="wrap-input100 validate-input" data-validate="">
+                                            <div>Input a minimum price</div>
+                                            <input class="input100" type="text" name="minprice" placeholder="Min price">
+                                        </div>
+                                        <div class="wrap-input100 validate-input" data-validate="">
+                                            <div> Input a maxmium price</div>
+                                            <input class="input100" type="text" name="maxprice" placeholder="Max price">
+                                        </div>
+
+
+                                        <button type="submit" class="btn btn-primary btn-lg">filter</button>
                                     </form>
 
                                 </div>
@@ -138,7 +146,7 @@
                             </div>
                             <div class="shop-products">
                                 {% for resalecard in resalecardlist %}
-                                <div class="row" style="margin-top:30px;margin-bottom: 30px; " class = {{resalecard.1}}>
+                                <div class="row" style="margin-top:30px;margin-bottom: 30px; " class={{resalecard.1}}>
                                     <div class="col-md-6">
                                         <img src={{resalecard.7}} alt="Product">
                                     </div>
@@ -197,6 +205,21 @@
 </div>
 
 </div>
+
+<script>
+    function raritychange() {
+        var rarityfilter = document.getElementById("rarityfilter").value;
+        var chooserarity = document.getElementById("chooserarity");
+        if (rarityfilter == 'choose') {
+
+            chooserarity.style.display = "";
+        } else {
+            chooserarity.style.display = "none";
+        }
+    }
+</script>
+
+
 <script>
 
     function buyonecard(thisone) {
@@ -214,7 +237,7 @@
 
                 window.alert('Purchase successfully!!');
                 window.location.reload();
-               // window.locatio)
+                // window.locatio)
                 // n = '/resalepage/'
             }
         })
