@@ -95,9 +95,9 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th>orderID</th>
-                                        <th>card name</th>
-                                        <th>rarity</th>
+                                        <th>userID</th>
+                                        <th>opened_box_number</th>
+                                        <th>rare_card_number</th>
 
                                     </tr>
                                     </thead>
@@ -105,8 +105,8 @@
                                     {% for info in result %}
                                     <tr>
                                         <td>{{info.0}}</td>
-                                        <td>{{history.1}}</td>
-                                        <td>{{history.2}}</td>
+                                        <td>{{info.2}}</td>
+                                        <td>{{info.1}}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

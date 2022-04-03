@@ -346,8 +346,19 @@ def pricecheck(request):
 
 def adminpage(request):
     # todo 显示一个default的table表
-    return render(request, 'adminpage.html')
+    cursor = connection.cursor()
+    cursor.execute("SELECT userId, count(status) as a_num, a.box_num FROM Card natural join OwnedCard natural join (SELECT userID, sum(pay_amount) as sumpay, max(pay_amount) as maxpay, count(b_orderID) as box_num FROM BoxOrder GROUP BY userID) as a  GROUP BY userID;")
+    result = cursor.fetchall()
+    return render(request, 'adminpage.html', {'result': result})
 
 
 def adminsearch(request):
-    return 1
+    if request.method == "POST":
+        price = request.POST.get('minprice')
+        rarity = request.POST.get('cardrarity')
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT userId, count(status) as a_num, a.box_num FROM Card natural join OwnedCard natural join (SELECT userID, sum(pay_amount) as sumpay, max(pay_amount) as maxpay, count(b_orderID) as box_num FROM BoxOrder GROUP BY userID) as a where a.sumpay >= %s and rarity = %s GROUP BY userID;",[price,rarity])
+        result = cursor.fetchall()
+    return render(request, 'adminpage.html', {'result': result})
+
