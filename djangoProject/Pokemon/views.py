@@ -28,6 +28,8 @@ def login(request):
                     request.session['username'] = username
                     request.session['userID'] = result[0]
                     request.session['is_login'] = True
+                    if username == 'admin':
+                        return redirect('/adminpage/')
                     return redirect('/mainpage/')
                 else:
                     message = "password not correct！"
