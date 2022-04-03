@@ -135,8 +135,8 @@
                                 </div>
                             </div>
                             <div class="shop-products">
-                                {% for  resalecard in resalecardlist %}
-                                <div class="row" style="margin-top:30px;margin-bottom: 30px; ">
+                                {% for resalecard in resalecardlist %}
+                                <div class="row" style="margin-top:30px;margin-bottom: 30px; " class = {{resalecard.1}}>
                                     <div class="col-md-6">
                                         <img src={{resalecard.7}} alt="Product">
                                     </div>
@@ -162,7 +162,7 @@
 
                                                         </button>
                                                         <h4 class="modal-title" id="myModalLabel">
-                                                            you want to buy one?
+                                                            Do you want to buy it?
                                                         </h4>
                                                     </div>
 
@@ -173,7 +173,7 @@
                                                         <button type="button"
                                                                 class="btn btn-primary" data-dismiss="modal"
                                                                 onclick="buyonecard({{resalecard.1}})">
-                                                             yes
+                                                            yes
                                                         </button>
                                                     </div>
                                                 </div><!-- /.modal-content -->
@@ -208,9 +208,12 @@
                 cardID: cardID,
                 csrfmiddlewaretoken: "{{ csrf_token }}"
             },
-            success: function (result) {
-                window.location = '/resalepage/'
+            success: function (id) {
 
+                window.alert('Purchase successfully!!');
+                window.location.reload();
+               // window.locatio)
+                // n = '/resalepage/'
 
             }
 
