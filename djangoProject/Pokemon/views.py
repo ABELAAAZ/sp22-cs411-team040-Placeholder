@@ -260,3 +260,10 @@ def resalehistory(request):
         return render(request, 'resalehistory.html', {})
     else:
         return redirect('/login/')
+
+
+
+def showpricetrend(request):
+    #TODO
+    trendlist=[[20220202,10],[20220218,9],[20220401,15]]
+    return HttpResponse(json.dumps(trendlist))

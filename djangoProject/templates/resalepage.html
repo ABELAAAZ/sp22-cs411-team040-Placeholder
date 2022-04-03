@@ -135,7 +135,7 @@
                                 </div>
                             </div>
                             <div class="shop-products">
-                                {% for  resalecard in resalecardlist %}
+                                {% for resalecard in resalecardlist %}
                                 <div class="row" style="margin-top:30px;margin-bottom: 30px; ">
                                     <div class="col-md-6">
                                         <img src={{resalecard.7}} alt="Product">
@@ -144,10 +144,14 @@
                                         <h3 class="product__title">
                                             <a>{{resalecard.6}}</a>
                                         </h3>
+
                                         <span class="money">{{resalecard.4}}</span>
                                         <span class="sign">$</span>
                                         <h6> Rarity:{{resalecard.5}}</h6>
                                         <h6> Type:{{resalecard.8}}</h6>
+                                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
+                                                onclick="showpricetrend({{resalecard.1}})">Price trend
+                                        </button>
                                         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
                                                 data-target=#{{resalecard.1}}>Purchase
                                         </button>
@@ -173,12 +177,48 @@
                                                         <button type="button"
                                                                 class="btn btn-primary" data-dismiss="modal"
                                                                 onclick="buyonecard({{resalecard.1}})">
-                                                             yes
+                                                            yes
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-end -->
+                                        <!-- /.price trend modal -->
+                                        <div class="modal fade " id="pricetrend{{resalecard.1}}" tabindex="-1" role="dialog"
+                                             aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">
+                                                            This is the price trend of the {{resalecard.6}} in 30 days
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table id="showpricetrendtable">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>tradeday</th>
+                                                                <th>price</th>
+
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="modal-footer">
+
+                                                        <button type="button"
+                                                                class="btn btn-primary" data-dismiss="modal">
+                                                            close
                                                         </button>
                                                     </div>
                                                 </div><!-- /.modal-content -->
-                                            </div><!-- /.modal -->
-                                        </div>
+                                            </div>
+                                        </div><!-- /.modal -->
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -213,6 +253,36 @@
 
 
             }
+
+        })
+    }
+</script>
+
+<script>
+    function showpricetrend(thisone) {
+        var cardID = thisone;
+
+        $.ajax({
+            url: "/showpricetrend/",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                cardID: cardID,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (result) {
+
+                var pricetrend = eval(result);
+                console.log('access to price trend')
+                $(("#pricetrend"+cardID+" tbody")).html("");
+                for (var i = 0; i < pricetrend.length; i++) {
+                    $("tbody").append("<tr>"
+                        + "<td>" +  pricetrend[i][0] + "</td>"
+                        + "<td>$" +  pricetrend[i][1] + "</td>"
+                        + "</tr>");
+                }
+                $(("#pricetrend"+cardID)).modal('show');
+            },
 
         })
     }
