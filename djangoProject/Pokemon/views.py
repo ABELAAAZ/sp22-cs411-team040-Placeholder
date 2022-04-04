@@ -40,7 +40,6 @@ def login(request):
         else:
             return render(request, 'login.html')
 
-
 def logout(request):
     if request.session.get('is_login', None):
         request.session.flush()
@@ -95,7 +94,6 @@ def mypokemon(request):
     else:
         return redirect('/login/')
 
-
 def checkbox(request):
     if request.method == "POST":
         cursor = connection.cursor()
@@ -115,13 +113,11 @@ def checkbox(request):
                     )
                 if len(types) == 2:
                     cursor.execute(
-                        "select * from BlindBox where (b_price < 40 and (title = %s or title = %s))",
-                        [types[0], types[1]]
+                        "select * from BlindBox where (b_price < 40 and (title = %s or title = %s))", [types[0], types[1]]
                     )
                 if len(types) == 3:
                     cursor.execute(
-                        "select * from BlindBox where (b_price < 40 and (title = %s or title = %s or title = %s))",
-                        [types[0], types[1], types[2]]
+                        "select * from BlindBox where (b_price < 40 and (title = %s or title = %s or title = %s))", [types[0], types[1], types[2]]
                     )
 
         else:
@@ -136,17 +132,14 @@ def checkbox(request):
                     )
                 if len(types) == 2:
                     cursor.execute(
-                        "select * from BlindBox where (b_price >= 40 and (title = %s or title = %s))",
-                        [types[0], types[1]]
+                        "select * from BlindBox where (b_price >= 40 and (title = %s or title = %s))", [types[0], types[1]]
                     )
                 if len(types) == 3:
                     cursor.execute(
-                        "select * from BlindBox where (b_price >= 40 and (title = %s or title = %s or title = %s))",
-                        [types[0], types[1], types[2]]
+                        "select * from BlindBox where (b_price >= 40 and (title = %s or title = %s or title = %s))", [types[0], types[1], types[2]]
                     )
         boxlist = cursor.fetchall()
         return render(request, 'mainpage.html', {'blindboxlist': boxlist})
-
 
 def boxhistory(request):
     if request.session.get('is_login', None):
@@ -177,7 +170,7 @@ def buyonebox(request):
     for i in range(4):
         box_infor = cursor.fetchone()
         box_pro.append(box_infor[2])
-
+    print(box_pro)
     returnlist = []
     for i in range(5):
         m = random.randint(1, 1000)
@@ -319,17 +312,17 @@ def resalehistory(request):
         return redirect('/login/')
 
 
+
 def showpricetrend(request):
     # TODO
     trendlist = [[20220202, 10], [20220218, 9], [20220401, 15]]
     return HttpResponse(json.dumps(trendlist))
 
-
 def deleteboxhistory(request):
     orderID = request.POST.get('orderID')
     cursor = connection.cursor()
     cursor.execute(
-        " delete from BoxOrder where b_orderID  = %s", orderID)
+        " delete from BoxOrder where b_orderID  = %s",orderID)
     return redirect('/boxhistory/')
 
 
@@ -338,10 +331,10 @@ def searchbox(request):
         keyword = request.POST.get('keyword', None)
         cursor = connection.cursor()
         keyword = "%" + str(keyword) + "%"
-
+        print(keyword)
         cursor.execute("select * from BlindBox where title like %s", keyword)
         searchedcard = cursor.fetchall()
-
+        print(searchedcard)
     return render(request, 'mainpage.html', {'blindboxlist': searchedcard})
 
 
@@ -390,28 +383,7 @@ def checkavg(request):
                     "SELECT cardNO, c_name, type, rarity, avg(trade_amount) avgamt, count(r_orderID) FROM ResaleOrder NATURAL JOIN OwnedCard NATURAL JOIN Card WHERE type = %s and rarity = %s GROUP BY cardNO HAVING avgamt >= %s and avgamt <= %s ORDER BY avgamt desc",
                     [type, rarity, minprice, maxprice])
 
-
-        '''
-        if minprice is not None and maxprice is None:
-            cursor.execute(
-                "SELECT cardNO, c_name, type, rarity, avg(trade_amount) avgamt, count(r_orderID) FROM ResaleOrder NATURAL JOIN OwnedCard NATURAL JOIN Card WHERE type = %s and rarity = %s GROUP BY cardNO HAVING avgamt >= %s ORDER BY avgamt desc",
-                [type, rarity, minprice])
-        elif maxprice is not None and minprice is None:
-            cursor.execute(
-                "SELECT cardNO, c_name, type, rarity, avg(trade_amount) avgamt, count(r_orderID) FROM ResaleOrder NATURAL JOIN OwnedCard NATURAL JOIN Card WHERE type = %s and rarity = %s GROUP BY cardNO HAVING avgamt <= %s ORDER BY avgamt desc",
-                [type, rarity, maxprice])
-        elif maxprice is not None and minprice is not None:
-            cursor.execute(
-                "SELECT cardNO, c_name, type, rarity, avg(trade_amount) avgamt, count(r_orderID) FROM ResaleOrder NATURAL JOIN OwnedCard NATURAL JOIN Card WHERE type = %s and rarity = %s GROUP BY cardNO HAVING avgamt >= %s and avgamt <= %s ORDER BY avgamt desc",
-                [type, rarity, minprice, maxprice])
-        else:
-            cursor.execute(
-                "SELECT cardNO, c_name, type, rarity, avg(trade_amount) avgamt, count(r_orderID) FROM ResaleOrder NATURAL JOIN OwnedCard NATURAL JOIN Card WHERE type = %s and rarity = %s GROUP BY cardNO ORDER BY avgamt desc",
-                [type, rarity])
-        '''
-        avgpricelist = cursor.fetchall()
-
-        return render(request, 'pricecheck.html', {'avgpricelist': avgpricelist})
+        return render(request, 'pricecheck.html')
     else:
         return redirect('/login/')
 
@@ -419,8 +391,7 @@ def checkavg(request):
 def adminpage(request):
     # todo 显示一个default的table表
     cursor = connection.cursor()
-    cursor.execute(
-        "SELECT userId, count(status) as a_num, a.box_num FROM Card natural join OwnedCard natural join (SELECT userID, sum(pay_amount) as sumpay, max(pay_amount) as maxpay, count(b_orderID) as box_num FROM BoxOrder GROUP BY userID) as a  GROUP BY userID;")
+    cursor.execute("SELECT userId, count(status) as a_num, a.box_num FROM Card natural join OwnedCard natural join (SELECT userID, sum(pay_amount) as sumpay, max(pay_amount) as maxpay, count(b_orderID) as box_num FROM BoxOrder GROUP BY userID) as a  GROUP BY userID;")
     result = cursor.fetchall()
     return render(request, 'adminpage.html', {'result': result})
 
@@ -438,8 +409,26 @@ def adminsearch(request):
 
 
 def checkmycard(request):
-    # todo
-    return 1
+    if request.method == "POST":
+        cursor = connection.cursor()
+        userID = request.session.get('userID', None)
+        typefilter = request.POST.get('typefilter', None)
+        rarityfilter = request.POST.get('rarityfilter', None)
+        rarity = request.POST.getlist('rarity', None)
+        types = request.POST.getlist('type', None)
+        status = request.POST.getlist('status',None)
+        statusfilter = request.POST.get('statusfilter1', None)
+        if typefilter == "alltypes":
+            types = ['Fire','Water','Grass']
+        if rarityfilter == 'allrarity':
+            rarity = ['A','B','C','D']
+        if statusfilter == 'allstatus':
+            status = ['owned','selling']
+        print(types)
+        print(status)
+        cursor.execute("select c_name,rarity, img from OwnedCard natural join Card where status in %s and type in %s and rarity in %s and userID = %s",[status,types,rarity,userID])
+        boxlist = cursor.fetchall
+        return render(request, 'mypokemon.html', {'cardlist': boxlist})
 
 
 def checkresalecard(request):
