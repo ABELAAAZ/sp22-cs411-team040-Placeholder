@@ -99,42 +99,44 @@ def checkbox(request):
         cursor = connection.cursor()
         typefilter = request.POST.get('typefilter', None)
         price = request.POST.get('price', None)
-        type = request.POST.get('type', None)
+        types = request.POST.getlist('type', None)
+
         if price == 'less40':
-            if typefilter == 'alltypes':
+            if typefilter == 'alltypes' or len(types) == 0:
                 cursor.execute(
                     "select * from BlindBox where b_price < 40"
                 )
             else:
-                if type == 'Fire':
+                if len(types) == 1:
                     cursor.execute(
-                        "select * from BlindBox where (b_price < 40 and title = 'Fire')"
+                        "select * from BlindBox where (b_price < 40 and title = %s)", types[0]
                     )
-                elif type == 'Water':
+                if len(types) == 2:
                     cursor.execute(
-                        "select * from BlindBox where (b_price < 40 and title = 'Water')"
+                        "select * from BlindBox where (b_price < 40 and (title = %s or title = %s))", [types[0], types[1]]
                     )
-                else:
+                if len(types) == 3:
                     cursor.execute(
-                        "select * from BlindBox where (b_price < 40 and title = 'Grass')"
+                        "select * from BlindBox where (b_price < 40 and (title = %s or title = %s or title = %s))", [types[0], types[1], types[2]]
                     )
+
         else:
-            if typefilter == 'alltypes':
+            if typefilter == 'alltypes' or len(types) == 0:
                 cursor.execute(
                     "select * from BlindBox where b_price >= 40"
                 )
             else:
-                if type == 'Fire':
+                if len(types) == 1:
                     cursor.execute(
-                        "select * from BlindBox where (b_price >= 40 and title = 'Fire')"
+                        "select * from BlindBox where (b_price >= 40 and title = %s)", types[0]
                     )
-                elif type == 'Water':
+                if len(types) == 2:
                     cursor.execute(
-                        "select * from BlindBox where (b_price >= 40 and title = 'Water')"
+                        "select * from BlindBox where (b_price >= 40 and (title = %s or title = %s))", [types[0], types[1]]
                     )
-                else:
+                if len(types) == 3:
                     cursor.execute(
-                        "select * from BlindBox where (b_price >= 40 and title = 'Grass')"
+                        "select * from BlindBox where (b_price >= 40 and (title = %s or title = %s or title = %s))", [types[0], types[1], types[2]]
                     )
         boxlist = cursor.fetchall()
         return render(request, 'mainpage.html', {'blindboxlist': boxlist})
