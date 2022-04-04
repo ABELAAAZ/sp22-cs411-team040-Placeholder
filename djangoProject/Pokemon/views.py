@@ -459,11 +459,11 @@ def checkresalecard(request):
                 )
             if len(types) == 3:
                 cursor.execute(
-                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s or rarity = s%) and (c_price >= %s and c_price <= %s)", [types[0], types[1], types[2],minprice,maxprice]
+                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s or rarity = %s) and (c_price >= %s and c_price <= %s)", [types[0], types[1], types[2],minprice,maxprice]
                 )
             if len(types) == 4:
                 cursor.execute(
-                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s or rarity = s% or rarity = s%) and (c_price >= %s and c_price <= %s)", [types[0], types[1], types[2], types[3], minprice,maxprice]
+                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s or rarity = %s or rarity = %s) and (c_price >= %s and c_price <= %s)", [types[0], types[1], types[2], types[3], minprice,maxprice]
                 )
         salelist = cursor.fetchall()
         return render(request, 'resalepage.html', {'resalecardlist': salelist})
