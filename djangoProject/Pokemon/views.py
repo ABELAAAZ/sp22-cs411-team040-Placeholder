@@ -371,5 +371,38 @@ def checkmycard(request):
 
 
 def checkresalecard(request):
-    # todo
-    return 1
+    if request.method == "POST":
+        cursor = connection.cursor()
+        rarityfilter = request.POST.get('rarityfilter', None)
+        types = request.POST.getlist('type', None)
+        minprice = request.POST.get('minprice', None)
+        maxprice = request.POST.get('maxprice', None)
+
+        if minprice != '':
+            minprice = int(minprice)
+        if maxprice != '':
+            maxprice = int(maxprice)
+
+        if rarityfilter == 'allrarity' or len(types) == 0:
+            cursor.execute(
+                "select * from OwnedCard natural join Card where status='selling' and (c_price >= %s and c_price <= %s)",[minprice,maxprice]
+            )
+        else:
+            if len(types) == 1:
+                cursor.execute(
+                    "select * from OwnedCard natural join Card where status='selling' and rarity = %s and (c_price >= %s and c_price <= %s)", [types[0],minprice,maxprice]
+                )
+            if len(types) == 2:
+                cursor.execute(
+                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s) and (c_price >= %s and c_price <= %s)", [types[0], types[1],minprice,maxprice]
+                )
+            if len(types) == 3:
+                cursor.execute(
+                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s or rarity = s%) and (c_price >= %s and c_price <= %s)", [types[0], types[1], types[2],minprice,maxprice]
+                )
+            if len(types) == 4:
+                cursor.execute(
+                    "select * from OwnedCard natural join Card where status='selling' and (rarity = %s or rarity = %s or rarity = s% or rarity = s%) and (c_price >= %s and c_price <= %s)", [types[0], types[1], types[2], types[3], minprice,maxprice]
+                )
+        salelist = cursor.fetchall()
+        return render(request, 'resalepage.html', {'resalecardlist': salelist})
