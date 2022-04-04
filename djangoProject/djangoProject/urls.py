@@ -42,6 +42,7 @@ urlpatterns = [
     path('searchbox/', views.searchbox),
     path('checkmycard/', views.checkmycard),
     path('checkresalecard/', views.checkresalecard),
+    path('checkavg/', views.checkavg),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
