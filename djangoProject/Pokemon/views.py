@@ -311,12 +311,14 @@ def resalehistory(request):
     else:
         return redirect('/login/')
 
-
-
 def showpricetrend(request):
-    # TODO
-    trendlist = [[20220202, 10], [20220218, 9], [20220401, 15]]
-    return HttpResponse(json.dumps(trendlist))
+    cardID=request.POST.get('cardID')
+    cursor = connection.cursor()
+    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID desc limit 10", cardID)
+    trendresult=cursor.fetchall()
+    print(trendresult)
+    return HttpResponse(json.dumps(trendresult))
+
 
 def deleteboxhistory(request):
     orderID = request.POST.get('orderID')
@@ -418,7 +420,6 @@ def checkavg(request):
 
 
 def adminpage(request):
-    # todo 显示一个default的table表
     cursor = connection.cursor()
     cursor.execute("SELECT userId, count(status) as a_num, a.box_num FROM Card natural join OwnedCard natural join (SELECT userID, sum(pay_amount) as sumpay, max(pay_amount) as maxpay, count(b_orderID) as box_num FROM BoxOrder GROUP BY userID) as a  GROUP BY userID;")
     result = cursor.fetchall()
@@ -454,7 +455,7 @@ def checkmycard(request):
         if statusfilter == 'allstatus':
             status = ['owned','selling']
 
-        cursor.execute("select c_name,rarity, img from OwnedCard natural join Card where status in %s and type in %s and rarity in %s and userID = %s",[status,types,rarity,userID])
+        cursor.execute("select c_name,rarity, img,type,status,cardID  from OwnedCard natural join Card where status in %s and type in %s and rarity in %s and userID = %s",[status,types,rarity,userID])
         boxlist = cursor.fetchall
         return render(request, 'mypokemon.html', {'cardlist': boxlist})
 

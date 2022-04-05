@@ -160,9 +160,14 @@
                                         <h6> Rarity:{{resalecard.5}}</h6>
                                         <h6> Type:{{resalecard.8}}</h6>
                                         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
+                                                onclick="showpricetrend({{resalecard.1}})">price trend
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
                                                 data-target=#{{resalecard.1}}>Purchase
                                         </button>
-                                        <!-- modal window -->
+
+
+                                        <!-- buy one card modal window -->
                                         <div class="modal fade " id={{resalecard.1}} tabindex="-1" role="dialog"
                                              aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -185,6 +190,41 @@
                                                                 class="btn btn-primary" data-dismiss="modal"
                                                                 onclick="buyonecard({{resalecard.1}})">
                                                             yes
+                                                        </button>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal -->
+                                        </div>
+
+                                        <!-- check price trend modal window -->
+                                        <div class="modal fade " id="trend{{resalecard.1}}" tabindex="-1" role="dialog"
+                                             aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">
+                                                            price trend in the last 10 transactions
+                                                        </h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table id='pricetrend{{resalecard.1}}' class="table table-striped">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>trade day</th>
+                                                                <th>trade amount</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal" onclick="">Close
                                                         </button>
                                                     </div>
                                                 </div><!-- /.modal-content -->
@@ -220,12 +260,9 @@
     }
 </script>
 
-
 <script>
-
     function buyonecard(thisone) {
         var cardID = thisone;
-
         $.ajax({
             url: "/buyonecard/",
             type: "POST",
@@ -235,7 +272,6 @@
                 csrfmiddlewaretoken: "{{ csrf_token }}"
             },
             success: function (id) {
-
                 window.alert('Purchase successfully!!');
                 window.location.reload();
                 // window.locatio)
@@ -244,23 +280,36 @@
         })
     }
 </script>
-<!--
-<script src="/static/bootstrap/js/jquery.js"></script>
-<script src="/static/js/main.js"></script>
-<script src="/static/bootstrap/js/jquery-3.2.1.min.js"></script>
 
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
-<script src="/static/bootstrap/js/popper.min.js"></script>
-<script src="/static/bootstrap/js/jquery.js"></script>
-<script src="/static/bootstrap/js/popper.min.js"></script>
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
-<script src="/static/bootstrap/js/slick.slider.min.js"></script>
-<script src="/static/bootstrap/js/fancybox.min.js"></script>
-<script src="/static/bootstrap/js/isotope.min.js"></script>
-<script src="/static/bootstrap/js/smartmenus.min.js"></script>
-<script src="/static/bootstrap/js/progressbar.js"></script>
-<script src="/static/bootstrap/js/jquery.countdown.min.js"></script>
-<script src="/static/bootstrap/js/functions.js"></script>   -->
+
+
+<script>
+    function showpricetrend(thisone) {
+        var cardID = thisone;
+
+        $.ajax({
+            url: "/showpricetrend/",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                cardID: cardID,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (pricetrendresult) {
+                console.log("yews")
+                var trendresult = eval(pricetrendresult);
+                $(("#pricetrend"+cardID+" tbody")).html("");
+                for (var i = 0; i < trendresult.length; i++) {
+                    $("tbody").append("<tr>"
+                        + "<td>" + trendresult[i][0] + "</td>"
+                        + "<td>" + trendresult[i][1] + "</td>"
+                        + "</tr>");
+                }
+                $(('#trend'+cardID)).modal('show');
+            }
+        })
+    }
+</script>
 
 
 <script src="/static/bootstrap/js/jquery.js"></script>
