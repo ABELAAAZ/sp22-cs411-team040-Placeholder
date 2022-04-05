@@ -393,8 +393,6 @@ def checkavg(request):
         if maxprice == '':
             maxprice = 1000000000
 
-
-
         if type == 'Choose one type':
             if rarity == 'Choose one rarity':
                 cursor.execute(

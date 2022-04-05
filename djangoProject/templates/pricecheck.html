@@ -97,7 +97,7 @@
 
                     <div class="row" style="margin-top:50px;">
 
-                        <form class="login100-form validate-form" method="post" action = "/checkavg/">
+                        <form class="login100-form validate-form" method="post" action="/checkavg/">
 
                             {% csrf_token %}
 
@@ -108,6 +108,14 @@
                                     <option value="Fire">Fire</option>
                                     <option value="Water">Water</option>
                                     <option value="Grass">Grass</option>
+                                    <option value="Darkness">Darkness</option>
+                                    <option value="Psychic">Psychic</option>
+                                    <option value="Colorless">Colorless</option>
+                                    <option value="Lightning">Lightning</option>
+                                    <option value="Fighting">Fighting</option>
+                                    <option value="Dragon">Dragon</option>
+                                    <option value="Metal">Metal</option>
+                                    <option value="Fairy">Fairy</option>
                                 </select>
                             </div>
                             <div class="wrap-input100 validate-input" data-validate="card rarity is required">
@@ -120,13 +128,13 @@
                                     <option value="D">D</option>
                                 </select>
                             </div>
-                            <div >
+                            <div>
                                 <div>Input a minimum price</div>
-                                <input class="input100" type="text" name="minprice" placeholder="Min price" >
+                                <input class="input100" type="text" name="minprice" placeholder="Min price">
                             </div>
                             <div>
                                 <div> Input a maxmium price</div>
-                                <input class="input100" type="text" name="maxprice" placeholder="Max price" >
+                                <input class="input100" type="text" name="maxprice" placeholder="Max price">
                             </div>
 
                             <div class="container-login100-form-btn">
