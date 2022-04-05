@@ -160,17 +160,17 @@ def buyonebox(request):
     today = datetime.date.today()
     paydate = today.strftime('%y%m%d')
     cursor = connection.cursor()
-    # print('go')
+
     cursor.execute("select b_price from BlindBox where boxID =%s", boxid)
     price = cursor.fetchone()
     price = price[0]
-    # print(userid,int(boxid),paydate,price)
+
     cursor.execute("select title, rarity, prob from BlindBox natural join Probability where boxID = %s", boxid)
     box_pro = []
     for i in range(4):
         box_infor = cursor.fetchone()
         box_pro.append(box_infor[2])
-    print(box_pro)
+
     returnlist = []
     for i in range(5):
         m = random.randint(1, 1000)
@@ -331,11 +331,40 @@ def searchbox(request):
         keyword = request.POST.get('keyword', None)
         cursor = connection.cursor()
         keyword = "%" + str(keyword) + "%"
-        print(keyword)
+
         cursor.execute("select * from BlindBox where title like %s", keyword)
+        searchedbox = cursor.fetchall()
+
+    return render(request, 'mainpage.html', {'blindboxlist': searchedbox})
+
+
+def searchresalecard(request):
+    if request.method == "POST":
+        keyword = request.POST.get('keyword', None)
+        cursor = connection.cursor()
+        keyword = "%" + str(keyword) + "%"
+
+        cursor.execute("select * from OwnedCard natural join Card where status='selling' and c_name like %s", keyword)
+        searchedresalecard = cursor.fetchall()
+
+        return render(request, 'resalepage.html', {'resalecardlist': searchedresalecard})
+    else:
+        return redirect('/login/')
+
+
+def searchcard(request):
+    if request.method == "POST":
+        keyword = request.POST.get('keyword', None)
+        cursor = connection.cursor()
+        keyword = "%" + str(keyword) + "%"
+        userID = request.session.get('userID', None)
+        cursor.execute("select c_name,rarity, img,type,status,cardID from Card natural join OwnedCard where userID =%s and c_name like %s",
+                       [userID, keyword])
         searchedcard = cursor.fetchall()
-        print(searchedcard)
-    return render(request, 'mainpage.html', {'blindboxlist': searchedcard})
+
+        return render(request, 'mypokemon.html', {'cardlist': searchedcard})
+    else:
+        return redirect('/login/')
 
 
 def pricecheck(request):
@@ -382,8 +411,8 @@ def checkavg(request):
                 cursor.execute(
                     "SELECT cardNO, c_name, type, rarity, avg(trade_amount) avgamt, count(r_orderID) FROM ResaleOrder NATURAL JOIN OwnedCard NATURAL JOIN Card WHERE type = %s and rarity = %s GROUP BY cardNO HAVING avgamt >= %s and avgamt <= %s ORDER BY avgamt desc",
                     [type, rarity, minprice, maxprice])
-
-        return render(request, 'pricecheck.html')
+        avgpricelist = cursor.fetchall()
+        return render(request, 'pricecheck.html', {'avgpricelist': avgpricelist})
     else:
         return redirect('/login/')
 
@@ -424,8 +453,7 @@ def checkmycard(request):
             rarity = ['A','B','C','D']
         if statusfilter == 'allstatus':
             status = ['owned','selling']
-        print(types)
-        print(status)
+
         cursor.execute("select c_name,rarity, img from OwnedCard natural join Card where status in %s and type in %s and rarity in %s and userID = %s",[status,types,rarity,userID])
         boxlist = cursor.fetchall
         return render(request, 'mypokemon.html', {'cardlist': boxlist})
