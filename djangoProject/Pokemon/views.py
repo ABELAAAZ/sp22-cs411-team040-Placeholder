@@ -461,6 +461,13 @@ def checkmycard(request):
             status = ['owned','selling']
         if typefilter == "alltypes":
             types=["Darkness","Fire","Psychic","Colorless","Water","Lightning","Grass","Fighting","Dragon","Metal","Fairy"]
+        if len(rarity) == 0:
+            rarity = ['A', 'B', 'C', 'D']
+        if len(status) == 0:
+            status = ['owned', 'selling']
+        if len(types) == 0:
+            types = types=["Darkness","Fire","Psychic","Colorless","Water","Lightning","Grass","Fighting","Dragon","Metal","Fairy"]
+        print(rarity)
         cursor.execute("select c_name,rarity, img,type,status,cardID  from OwnedCard natural join Card where status in %s and type in %s and rarity in %s and userID = %s order by cardID desc",[status,types,rarity,userID])
         boxlist = cursor.fetchall
         return render(request, 'mypokemon.html', {'cardlist': boxlist})
