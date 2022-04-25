@@ -9,8 +9,8 @@ import sqlalchemy
 from sqlalchemy import text, DDL
 #trigger = "CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
 cursor = connection.cursor()
-cursor.execute("  drop trigger bonus1;")
-cursor.execute(" CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
+cursor.execute("  drop trigger if exists bonus1;")
+cursor.execute(" CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID and NEW.pay_datetime - pay_datetime <= 10 group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
                    )
 def login(request):
     if request.session.get('is_login', None):
