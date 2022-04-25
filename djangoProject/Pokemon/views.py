@@ -483,8 +483,12 @@ def checkresalecard(request):
 
         if minprice != '':
             minprice = int(minprice)
+        else:
+            minprice = 0
         if maxprice != '':
             maxprice = int(maxprice)
+        else:
+            maxprice = 99999
 
         if rarityfilter == 'allrarity' or len(types) == 0:
             cursor.execute(
