@@ -5,8 +5,13 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import HttpResponse
 import datetime
-
-
+import sqlalchemy
+from sqlalchemy import text, DDL
+#trigger = "CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
+cursor = connection.cursor()
+cursor.execute("  drop trigger bonus1;")
+cursor.execute(" CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
+                   )
 def login(request):
     if request.session.get('is_login', None):
         return redirect('/mainpage/')
@@ -21,6 +26,7 @@ def login(request):
                 username = username.strip()
                 cursor = connection.cursor()
                 cursor.execute("select * from User where u_name=%s limit 1", username)
+                #cursor.execute(trigger)
                 result = cursor.fetchone()
 
                 if result[1] == password:
@@ -160,6 +166,8 @@ def buyonebox(request):
     today = datetime.date.today()
     paydate = today.strftime('%y%m%d')
     cursor = connection.cursor()
+    #cursor.execute("CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
+                   #)
 
     cursor.execute("select b_price from BlindBox where boxID =%s", boxid)
     price = cursor.fetchone()
@@ -188,7 +196,7 @@ def buyonebox(request):
 
             elif m <= (box_pro[0] + box_pro[1]) * 1000:
                 cursor.execute(
-                    "selectcardNo,img ,c_name from Card where type = %s and rarity = %s order by Rand() limit 1",
+                    "select cardNo,img ,c_name from Card where type = %s and rarity = %s order by Rand() limit 1",
                     [box_infor[0], 'B'])
                 card_infor = cursor.fetchone()
                 cardNo = card_infor[0]
