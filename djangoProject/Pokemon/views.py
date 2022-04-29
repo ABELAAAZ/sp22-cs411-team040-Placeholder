@@ -12,7 +12,7 @@ from pyecharts.charts import Bar
 #trigger = "CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
 cursor = connection.cursor()
 cursor.execute(" drop trigger if exists bonus1;")
-cursor.execute(" CREATE TRIGGER bonus1 "
+cursor.execute("CREATE TRIGGER bonus1 "
                "BEFORE INSERT ON BoxOrder "
                "FOR EACH ROW "
                "BEGIN SET @totalBuy = (select count(b_orderID) "
@@ -20,8 +20,13 @@ cursor.execute(" CREATE TRIGGER bonus1 "
                "where boxID = NEW.boxID and datediff(STR_TO_DATE(NEW.pay_datetime,'%Y%m%d'),STR_TO_DATE(pay_datetime,'%Y%m%d')) <= 10 "
                "group by userID "
                "having userID = NEW.userID); "
-               "IF(@totalBuy >= 5) "
-               "THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; "
+               "IF(@totalBuy >= 5) THEN "
+               "SET NEW.pay_amount = NEW.pay_amount * 0.9; "
+               #"UPDATE BoxOrder SET pay_amount = NEW.pay_amount * 0.9 WHERE b_orderID = new.b_orderID; "
+                "IF(@totalBuy >= 10) THEN "
+               "SET @bonuscard = (select cardNo from Card where rarity = 'B' order by RAND() limit 1);"
+               "Insert into OwnedCard(cardNo, userID, status,c_price) values(@bonuscard, NEW.userID, 'bonus', 0.0); "
+                "END IF; "
                "END IF; "
                "END;" )
 
@@ -179,6 +184,8 @@ def boxhistory(request):
 def buyonebox(request):
     boxid = request.POST.get('boxid')
     userid = request.session.get('userID', None)
+    if userid == 20:
+        return redirect('/mainpage/')
     today = datetime.date.today()
     paydate = today.strftime('%Y%m%d')
     cursor = connection.cursor()
@@ -308,6 +315,9 @@ def resalepage(request):
 def buyonecard(request):
     cardID = request.POST.get('cardID')
     buyer = request.session.get('userID', None)
+
+    if buyer == 20:
+        return redirect('/resalepage/')
     today = datetime.date.today()
     paydate = today.strftime('%Y%m%d')
 
