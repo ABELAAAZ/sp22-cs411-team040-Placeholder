@@ -17,7 +17,7 @@ cursor.execute(" CREATE TRIGGER bonus1 "
                "FOR EACH ROW "
                "BEGIN SET @totalBuy = (select count(b_orderID) "
                "from BoxOrder "
-               "where boxID = NEW.boxID and NEW.pay_datetime - pay_datetime <= 10 "
+               "where boxID = NEW.boxID and datediff(STR_TO_DATE(NEW.pay_datetime,'%Y%m%d'),STR_TO_DATE(pay_datetime,'%Y%m%d')) <= 10 "
                "group by userID "
                "having userID = NEW.userID); "
                "IF(@totalBuy >= 5) "
@@ -51,7 +51,7 @@ def login(request):
                     request.session['userID'] = result[0]
                     request.session['is_login'] = True
                     if username == 'admin':
-                        return redirect('/dashboard/')
+                        return redirect('/adminpage/')
                     return redirect('/mainpage/')
                 else:
                     message = "password not correct！"
@@ -168,7 +168,7 @@ def boxhistory(request):
         cursor = connection.cursor()
         userID = request.session.get('userID', None)
         cursor.execute(
-            "select b_orderID, title ,pay_amount,pay_datetime from BoxOrder natural join BlindBox where userID =%s order by pay_datetime desc",
+            "select b_orderID, title ,pay_amount,pay_datetime from BoxOrder natural join BlindBox where userID =%s order by b_orderID desc",
             userID)
         boxhistorylist = cursor.fetchall()
         return render(request, 'boxhistory.html', {'boxhistorylist': boxhistorylist})
@@ -327,7 +327,7 @@ def resalehistory(request):
         cursor = connection.cursor()
         userID = request.session.get('userID', None)
         cursor.execute(
-            "select r_orderID, c_name, rarity, b.u_name, y.u_name, trade_amount, trade_datetime from (select r_orderID, c_name, rarity, u_name, buyerID, trade_amount, trade_datetime from (select r_orderID, c_name, rarity, sellerID, buyerID, trade_amount, trade_datetime from ResaleOrder natural join OwnedCard natural join Card where buyerID = %s or sellerID = %s) a left join User x on a.sellerID = x.userID) b left join User y on b.buyerID = y.userID",
+            "select r_orderID, c_name, rarity, b.u_name, y.u_name, trade_amount, trade_datetime from (select r_orderID, c_name, rarity, u_name, buyerID, trade_amount, trade_datetime from (select r_orderID, c_name, rarity, sellerID, buyerID, trade_amount, trade_datetime from ResaleOrder natural join OwnedCard natural join Card where buyerID = %s or sellerID = %s) a left join User x on a.sellerID = x.userID) b left join User y on b.buyerID = y.userID order by r_orderID desc",
             [userID, userID]
         )
         resalehistorylist = cursor.fetchall()
@@ -338,10 +338,8 @@ def resalehistory(request):
 def showpricetrend(request):
     cardID=request.POST.get('cardID')
     cursor = connection.cursor()
-    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID asc limit 10", cardID)
+    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID desc limit 10", cardID)
     trendresult=cursor.fetchall()
-    #bar = Bar().add_xaxis(trendresult[0]).add_yaxis(trendresult[1])
-
     print(trendresult)
     return HttpResponse(json.dumps(trendresult))
 
@@ -482,7 +480,7 @@ def checkmycard(request):
         if len(rarity) == 0:
             rarity = ['A', 'B', 'C', 'D']
         if len(status) == 0:
-            status = ['owned', 'selling']
+            status = ['owned', 'selling', 'bonus']
         if len(types) == 0:
             types = types=["Darkness","Fire","Psychic","Colorless","Water","Lightning","Grass","Fighting","Dragon","Metal","Fairy"]
         print(rarity)
