@@ -65,7 +65,7 @@
         </section>
 
         <div class="main-content-wrapper" style="color: black">
-            <div class="shop-page-wrapper ptb--80">
+            <div class="shop-page-wrapper ptb--80" style="min-height: 1500px">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-3">
@@ -82,7 +82,7 @@
                                 <h4>{{cardcount}}</h4>
                             </div>
                             <div>
-                                <span class="badge badge-soft-success font-size-11"> 12 </span>
+                                <span class="badge badge-soft-success font-size-11"> {{cardavg}} </span>
                                 <span>On average</span>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                                 <h4>{{boxordercount}}</h4>
                             </div>
                             <div>
-                                <span class="badge badge-soft-success font-size-11"> 12 </span>
+                                <span class="badge badge-soft-success font-size-11"> {{boxavg}} </span>
                                 <span>On average</span>
                             </div>
                         </div>
@@ -102,16 +102,23 @@
                                 <h4>{{resaleordercount}}</h4>
                             </div>
                             <div>
-                                <span class="badge badge-soft-success font-size-11"> 12 </span>
+                                <span class="badge badge-soft-success font-size-11"> {{resaleavg}} </span>
                                 <span>On average</span>
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="width: 1000px;height:500px; margin-top: 50px" id="boxordertrend">
+                    <div class="row" style="width: 1100px;height:500px; margin-top: 50px" id="boxordertrend">
                     </div>
-<div class="row">
-
-</div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row" style="width: 800px;height:500px; margin-top: 50px" id="resaleordertrend">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="row" style="width: 500px;height:500px; margin-top: 50px" id="onsaledistribution">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -124,7 +131,8 @@
     console.log(boxordertrend)
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('boxordertrend'));
-    var boxordertrend = eval({{boxordertrend | safe }});
+    var boxordertrend = eval({{boxordertrend | safe}})
+    ;
     console.log(boxordertrend[0][0])
     // 指定图表的配置项和数据
     var bodate = []
@@ -137,20 +145,178 @@
     }
     console.log(bodate)
     var option = {
-        title: { text: 'TOTAL BOX ORDER',
-            x: 'center'},
+        title: {
+            text: 'TOTAL BOX ORDER',
+            x: 'center'
+        },
         tooltip: {},
-        legend: {data: ['Count'],
-            x: 'right'},
+        legend: {
+            data: ['Count'],
+            x: 'right'
+        },
         xAxis: {data: bodate},
         yAxis: {},
-        series: [{name: 'count',
+        series: [{
+            name: 'count',
             type: 'line',
             data: bocount,
-            markLine: {data: [{type: 'average', name: 'average quantity'}]}}]};
+            markLine: {data: [{type: 'average', name: 'average quantity'}]}
+        }]
+    };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 </script>
+
+<script type="text/javascript">
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart2 = echarts.init(document.getElementById('resaleordertrend'));
+    var resaletrend = eval({{resaleorder | safe}});
+    console.log('resale card trend')
+    console.log(resaletrend)
+    console.log('resale card trend2')
+    // 指定图表的配置项和数据
+    var ddate = []
+    var allcount= []
+    var acount= []
+    var bcount= []
+    var ccount= []
+    var dcount= []
+
+    for (var i = 0; i < resaletrend.length; i++) {
+        ddate.push(resaletrend[i][0])
+        allcount.push(resaletrend[i][1])
+        acount.push(resaletrend[i][2])
+        bcount.push(resaletrend[i][3])
+        ccount.push(resaletrend[i][4])
+        dcount.push(resaletrend[i][5])
+    }
+
+    var option2 = {
+  title: {
+    text: 'RESALE ORDER TREND',
+       x: 'center'
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {
+    data: ['ALL', 'A', 'B', 'C', 'D'],
+      x:'right'
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: ddate
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      name: 'ALL',
+      type: 'line',
+      stack: 'Total',
+      data: allcount
+    },
+    {
+      name: 'A',
+      type: 'line',
+      stack: 'Total',
+      data: acount
+    },
+    {
+      name: 'B',
+      type: 'line',
+      stack: 'Total',
+      data: bcount
+    },
+    {
+      name: 'C',
+      type: 'line',
+      stack: 'Total',
+      data: ccount
+    },
+    {
+      name: 'D',
+      type: 'line',
+      stack: 'Total',
+      data:dcount
+    }
+  ]
+};
+    // 使用刚指定的配置项和数据显示图表。
+    myChart2.setOption(option2);
+</script>
+
+<script type="text/javascript">
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart1 = echarts.init(document.getElementById('onsaledistribution'));
+    var distribution = eval({{distribution | safe}})
+    ;
+
+    // 指定图表的配置项和数据
+
+    var option1 = {
+         title: {
+            text: 'On sale card',
+            x: 'center'
+        },
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    top: '5%',
+    left: 'center'
+  },
+  series: [
+    {
+      name: 'Number onsale',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: '#fff',
+        borderWidth: 2
+      },
+      label: {
+        show: false,
+        position: 'center'
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '40',
+          fontWeight: 'bold'
+        }
+      },
+      labelLine: {
+        show: false
+      },
+      data: [
+        { value: distribution[0][1], name: distribution[0][0]+' type'},
+        { value: distribution[1][1], name: distribution[1][0]+' type' },
+        { value: distribution[2][1], name: distribution[2][0] +' type'},
+        { value: distribution[3][1], name: distribution[3][0]+' type' }
+
+      ]
+    }
+  ]
+};
+    // 使用刚指定的配置项和数据显示图表。
+    myChart1.setOption(option1);
+</script>
+
+
 <script src="/static/bootstrap/js/jquery.js"></script>
 <script src="/static/js/main.js"></script>
 

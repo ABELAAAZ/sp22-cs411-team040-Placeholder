@@ -570,12 +570,25 @@ def dashboard(request):
             "select count(*) from ResaleOrder")
         resaleordercount = cursor.fetchone()
 
+        cardavg=round(cardcount[0]/usercount[0],2)
+        boxavg = round(boxordercount[0] / usercount[0],2)
+        resaleavg = round(resaleordercount[0] / usercount[0],2)
+
+
+
         cursor.execute(
             "select pay_datetime, count(b_orderID) from BoxOrder group by pay_datetime order by  pay_datetime asc")
         boxordertrend = cursor.fetchall()
 
+        cursor.execute(
+            "select rarity, count(cardID) from OwnedCard natural join Card where status='selling' group by rarity order by rarity asc")
+        resaledistribution = cursor.fetchall()
+
+        cursor.execute("select trade_datetime, count(*) Total, count(case when rarity = 'A' then 1 end) A,count(case when rarity = 'B' then 1 end) B, count(case when rarity = 'C' then 1 end) C, count(case when rarity = 'D' then 1 end) D from ResaleOrder natural join OwnedCard natural join Card group by trade_datetime")
+        resaleorderanalysis=cursor.fetchall()
+
         print(boxordertrend)
-        return render(request, 'dashboard.html',{'usercount':usercount[0],'cardcount':cardcount[0],'boxordercount':boxordercount[0],'resaleordercount':resaleordercount[0],'boxordertrend': json.dumps(boxordertrend)})
+        return render(request, 'dashboard.html',{'usercount':usercount[0],'cardcount':cardcount[0],'boxordercount':boxordercount[0],'resaleordercount':resaleordercount[0],'cardavg':cardavg,'boxavg':boxavg,'resaleavg':resaleavg,'boxordertrend': json.dumps(boxordertrend),'distribution':json.dumps(resaledistribution),'resaleorder':json.dumps(resaleorderanalysis)})
 
 
 
