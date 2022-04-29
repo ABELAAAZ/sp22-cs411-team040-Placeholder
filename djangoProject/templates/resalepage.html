@@ -215,17 +215,7 @@
                                                     <div id="pricechart{{resalecard.1}}"
                                                          style="width:490px; height:400px"></div>
                                                     <div class="modal-body">
-                                                        <table id='pricetrend{{resalecard.1}}'
-                                                               class="table table-striped">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>trade day</th>
-                                                                <th>trade amount</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            </tbody>
-                                                        </table>
+
                                                     </div>
 
                                                     <div class="modal-footer">
@@ -341,13 +331,7 @@
                     }]
                 };
                 myChart.setOption(option);
-                $(("#pricetrend" + cardID + " tbody")).html("");
-                for (var i = 0; i < trendresult.length; i++) {
-                    $("tbody").append("<tr>"
-                        + "<td>" + trendresult[i][0] + "</td>"
-                        + "<td>" + trendresult[i][1] + "</td>"
-                        + "</tr>");
-                }
+
                 $(('#trend' + cardID)).modal('show');
 
                 // 使用刚指定的配置项和数据显示图表。

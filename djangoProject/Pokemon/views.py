@@ -69,7 +69,7 @@ cursor.execute("create procedure bonus2(IN HP int(10),IN MP int(10),IN LP int(10
 "            into totalprice"
 "            from BoxOrder NATURAL join BlindBox"
 "            where userID = uid "
-"						and datediff(CURRENT_DATE,STR_TO_DATE(pay_datetime,'%Y%m%d'))<=7 ;											"
+"						and datediff(CURRENT_DATE,STR_TO_DATE(pay_datetime,'%Y%m%d'))<=7 ;"
 "	select count(c.H) AS HP,count(c.M) AS MP,count(c.L) AS LP"
 "    into exp_num,nor_num,ch_num"
 "	from"
@@ -121,6 +121,8 @@ cursor.execute("create procedure bonus2(IN HP int(10),IN MP int(10),IN LP int(10
 "				select * from bonustable"
 "				order by rare ;"
 "end;")
+
+
 def login(request):
     if request.session.get('is_login', None):
         return redirect('/mainpage/')
@@ -144,7 +146,7 @@ def login(request):
                     request.session['userID'] = result[0]
                     request.session['is_login'] = True
                     if username == 'admin':
-                        return redirect('/adminpage/')
+                        return redirect('/dashboard/')
                     return redirect('/mainpage/')
                 else:
                     message = "password not correct！"
