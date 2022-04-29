@@ -45,6 +45,9 @@ urlpatterns = [
     path('checkavg/', views.checkavg),
     path('searchresalecard/', views.searchresalecard),
     path('searchcard/', views.searchcard),
+    path('sendcard/', views.sendcard),
+    path('dashboard/', views.dashboard),
+    path('sendbonus/', views.sendbonus),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

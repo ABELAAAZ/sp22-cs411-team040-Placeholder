@@ -16,7 +16,8 @@
     <link rel="stylesheet" href="/static/bootstrap/style.css">
     <link rel="stylesheet" href="/static/bootstrap/css/color.css">
     <link rel="stylesheet" href="/static/bootstrap/css/responsive.css">
-
+    <link rel="stylesheet" href="/static/css/index.css" rel="external nofollow">
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
 
     <style>
         body {
@@ -133,7 +134,8 @@
                             <div class="shop-toolbar mb--50">
                                 <div class="row align-items-center">
                                     <div class="col-md-5 mb-sm--30 mb-xs--10">
-                                        <form class="navbar-form" role="search" method="POST" action="/searchresalecard/">
+                                        <form class="navbar-form" role="search" method="POST"
+                                              action="/searchresalecard/">
                                             {% csrf_token %}
                                             <div class="form-group">
                                                 <input type="text" class=" form-control input-lg" name="keyword"
@@ -146,6 +148,7 @@
                                 </div>
                             </div>
                             <div class="shop-products">
+
                                 {% for resalecard in resalecardlist %}
                                 <div class="row" style="margin-top:30px;margin-bottom: 30px; " class={{resalecard.1}}>
                                     <div class="col-md-6">
@@ -206,11 +209,14 @@
                                                                 aria-hidden="true">
                                                         </button>
                                                         <h4 class="modal-title" id="myModalLabel">
-                                                            price trend in the last 10 transactions
+                                                            {{resalecard.6}} price trend in the last 10 transactions
                                                         </h4>
                                                     </div>
+                                                    <div id="pricechart{{resalecard.1}}"
+                                                         style="width:490px; height:400px"></div>
                                                     <div class="modal-body">
-                                                        <table id='pricetrend{{resalecard.1}}' class="table table-striped">
+                                                        <table id='pricetrend{{resalecard.1}}'
+                                                               class="table table-striped">
                                                             <thead>
                                                             <tr>
                                                                 <th>trade day</th>
@@ -282,8 +288,7 @@
 </script>
 
 
-
-<script>
+<script type="text/javascript">
     function showpricetrend(thisone) {
         var cardID = thisone;
 
@@ -298,14 +303,55 @@
             success: function (pricetrendresult) {
                 console.log("yews")
                 var trendresult = eval(pricetrendresult);
-                $(("#pricetrend"+cardID+" tbody")).html("");
+                var myChart = echarts.init(document.getElementById('pricechart' + cardID));
+                var tradedate = []
+                var tradeamount = []
+                console.log(trendresult.length)
+                console.log("yews")
+                for (var i = 0; i < trendresult.length; i++) {
+                    tradedate.push(trendresult[i][0])
+                    tradeamount.push(trendresult[i][1])
+                }
+                console.log(tradedate)
+                var option = {
+                    title: {
+                        text: 'Price trend',
+                        x: 'center'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['price'],
+                        x: 'right'
+                    },
+                    xAxis: {
+                        data: tradedate
+                    },
+                    yAxis: {},
+
+                    series: [{
+                        name: 'price',
+                        type: 'line',
+                        data: tradeamount,
+                        markLine: {
+
+                            data: [
+                                {type: 'average', name: 'average price'}
+                            ]
+                        }
+                    }]
+                };
+                myChart.setOption(option);
+                $(("#pricetrend" + cardID + " tbody")).html("");
                 for (var i = 0; i < trendresult.length; i++) {
                     $("tbody").append("<tr>"
                         + "<td>" + trendresult[i][0] + "</td>"
                         + "<td>" + trendresult[i][1] + "</td>"
                         + "</tr>");
                 }
-                $(('#trend'+cardID)).modal('show');
+                $(('#trend' + cardID)).modal('show');
+
+                // 使用刚指定的配置项和数据显示图表。
+
             }
         })
     }

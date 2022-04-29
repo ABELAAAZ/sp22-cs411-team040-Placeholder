@@ -7,11 +7,27 @@ from django.http import HttpResponse
 import datetime
 import sqlalchemy
 from sqlalchemy import text, DDL
+from pyecharts import options as opts
+from pyecharts.charts import Bar
 #trigger = "CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
 cursor = connection.cursor()
-cursor.execute("  drop trigger if exists bonus1;")
-cursor.execute(" CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID and NEW.pay_datetime - pay_datetime <= 10 group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
-                   )
+cursor.execute(" drop trigger if exists bonus1;")
+cursor.execute(" CREATE TRIGGER bonus1 "
+               "BEFORE INSERT ON BoxOrder "
+               "FOR EACH ROW "
+               "BEGIN SET @totalBuy = (select count(b_orderID) "
+               "from BoxOrder "
+               "where boxID = NEW.boxID and NEW.pay_datetime - pay_datetime <= 10 "
+               "group by userID "
+               "having userID = NEW.userID); "
+               "IF(@totalBuy >= 5) "
+               "THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; "
+               "END IF; "
+               "END;" )
+
+cursor.execute("DROP PROCEDURE  IF EXISTS bonus2;")
+cursor.execute("create procedure bonus2(IN HP int(10),IN MP int(10),IN LP int(10))begin     declare uid INT(16); declare cardno1 INT(16); declare totalprice decimal(10,2); declare totalbox INT(16); declare rare VARCHAR(50); declare exp_num VARCHAR(50); declare nor_num VARCHAR(50); declare ch_num VARCHAR(50);	 declare done int default FALSE; declare cur cursor for (select  userID from User natural join BoxOrder group by userID order by userID); declare continue handler for not FOUND set done=TRUE;     drop table if exists bonustable; create table bonustable(        userID INT(16), totalprice DECIMAL(10,2), exp_num INT(16), nor_num INT(16), ch_num INT(16), rare varchar(10), cardno INT(16) );		 open cur; CLOOP:loop fetch cur into uid; if done then LEAVE CLOOP; end if; select sum(b_price) into totalprice from BoxOrder NATURAL join BlindBox where userID = uid  and datediff(CURRENT_DATE,STR_TO_DATE(pay_datetime,'%Y%m%d'))<=7 ;					 select COUNT(b_orderID) into exp_num from BoxOrder natural join (        select b_orderID,b_price, case  WHEN b_price > 70 THEN 'H' WHEN b_price > 30 THEN 'M' ELSE 'L' END AS order_level from BoxOrder natural join BlindBox ) b WHERE datediff(CURRENT_DATE,STR_TO_DATE(pay_datetime,'%Y%m%d'))<=7  and userID = uid  and order_level='H';						 select COUNT(b_orderID) into nor_num from BoxOrder natural join (        select b_orderID,b_price, case  WHEN b_price > 70 THEN 'H' WHEN b_price > 30 THEN 'M' ELSE 'L' END AS order_level from BoxOrder natural join BlindBox ) b WHERE datediff(CURRENT_DATE,STR_TO_DATE(pay_datetime,'%Y%m%d'))<=7  and userID = uid  and order_level='M';						 select COUNT(b_orderID) into ch_num from BoxOrder natural join ( select b_orderID,b_price, case  WHEN b_price > 70 THEN 'H' WHEN b_price > 30 THEN 'M' ELSE 'L' END AS order_level from BoxOrder natural join BlindBox ) b WHERE datediff(CURRENT_DATE,STR_TO_DATE(pay_datetime,'%Y%m%d'))<=7  and userID = uid  and order_level='L';						 if totalprice >=HP and (exp_num >=3 or nor_num >=5 or  ch_num >=7) then set rare = 'B';             elseif totalprice >=MP and (exp_num >=1 or nor_num >=3 or  ch_num >=5)then set rare = 'C';						 elseif totalprice >=LP then set  rare = 'D'; else  set rare=''; end if;						 if rare!='' then select cardNo  into cardno1 from Card where rarity = rare order by RAND() limit 1; Insert into bonustable values(uid,totalprice,exp_num,nor_num,ch_num,rare,cardno1);						 Insert into OwnedCard(cardNo, userID, status,c_price) values(cardno1, uid, 'send', 0.0); end if; END LOOP CLOOP; close cur; select * from bonustable order by rare; end;")
+
 def login(request):
     if request.session.get('is_login', None):
         return redirect('/mainpage/')
@@ -35,7 +51,7 @@ def login(request):
                     request.session['userID'] = result[0]
                     request.session['is_login'] = True
                     if username == 'admin':
-                        return redirect('/adminpage/')
+                        return redirect('/dashboard/')
                     return redirect('/mainpage/')
                 else:
                     message = "password not correct！"
@@ -152,7 +168,7 @@ def boxhistory(request):
         cursor = connection.cursor()
         userID = request.session.get('userID', None)
         cursor.execute(
-            "select b_orderID, title ,pay_amount,pay_datetime from BoxOrder natural join BlindBox where userID =%s",
+            "select b_orderID, title ,pay_amount,pay_datetime from BoxOrder natural join BlindBox where userID =%s order by pay_datetime desc",
             userID)
         boxhistorylist = cursor.fetchall()
         return render(request, 'boxhistory.html', {'boxhistorylist': boxhistorylist})
@@ -164,7 +180,7 @@ def buyonebox(request):
     boxid = request.POST.get('boxid')
     userid = request.session.get('userID', None)
     today = datetime.date.today()
-    paydate = today.strftime('%y%m%d')
+    paydate = today.strftime('%Y%m%d')
     cursor = connection.cursor()
     #cursor.execute("CREATE TRIGGER bonus1 BEFORE INSERT ON BoxOrder FOR EACH ROW BEGIN SET @totalBuy = (select count(b_orderID) from BoxOrder where boxID = NEW.boxID group by userID having userID = NEW.userID); IF(@totalBuy >= 5) THEN SET NEW.pay_amount = NEW.pay_amount * 0.9; END IF; END;"
                    #)
@@ -293,7 +309,7 @@ def buyonecard(request):
     cardID = request.POST.get('cardID')
     buyer = request.session.get('userID', None)
     today = datetime.date.today()
-    paydate = today.strftime('%y%m%d')
+    paydate = today.strftime('%Y%m%d')
 
     cursor = connection.cursor()
     cursor.execute("select * from OwnedCard where cardID =%s", cardID)
@@ -322,8 +338,10 @@ def resalehistory(request):
 def showpricetrend(request):
     cardID=request.POST.get('cardID')
     cursor = connection.cursor()
-    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID desc limit 10", cardID)
+    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID asc limit 10", cardID)
     trendresult=cursor.fetchall()
+    #bar = Bar().add_xaxis(trendresult[0]).add_yaxis(trendresult[1])
+
     print(trendresult)
     return HttpResponse(json.dumps(trendresult))
 
@@ -513,3 +531,53 @@ def checkresalecard(request):
                 )
         salelist = cursor.fetchall()
         return render(request, 'resalepage.html', {'resalecardlist': salelist})
+
+def sendcard(request):
+    if request.session.get('is_login', None):
+
+
+        return render(request, 'sendcard.html')
+
+
+
+def sendbonus(request):
+    if request.method == "POST":
+        HP = request.POST.get('AHP', None)
+        MP = request.POST.get('BHP', None)
+        LP = request.POST.get('CHP', None)
+        cursor = connection.cursor()
+        cursor.execute("call bonus2(%s,%s,%s);", [HP, MP, LP])
+        bonususer = cursor.fetchall()
+
+    return render(request, 'sendcard.html',{'bonususer':bonususer})
+
+
+
+def dashboard(request):
+    if request.session.get('is_login', None):
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(distinct userID) from User")
+        usercount=cursor.fetchone()
+
+        cursor.execute(
+            "select count(*) from OwnedCard")
+        cardcount = cursor.fetchone()
+
+        cursor.execute(
+            "select count(*) from BoxOrder")
+        boxordercount = cursor.fetchone()
+
+        cursor.execute(
+            "select count(*) from ResaleOrder")
+        resaleordercount = cursor.fetchone()
+
+        cursor.execute(
+            "select pay_datetime, count(b_orderID) from BoxOrder group by pay_datetime order by  pay_datetime asc")
+        boxordertrend = cursor.fetchall()
+
+        print(boxordertrend)
+        return render(request, 'dashboard.html',{'usercount':usercount[0],'cardcount':cardcount[0],'boxordercount':boxordercount[0],'resaleordercount':resaleordercount[0],'boxordertrend': json.dumps(boxordertrend)})
+
+
+
