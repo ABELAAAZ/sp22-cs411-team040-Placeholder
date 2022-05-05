@@ -437,7 +437,7 @@ def resalehistory(request):
 def showpricetrend(request):
     cardID=request.POST.get('cardID')
     cursor = connection.cursor()
-    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID desc limit 10", cardID)
+    cursor.execute("select trade_datetime, cast(trade_amount as char) as trade_amount from ResaleOrder where cardID in (select cardID from Card natural join OwnedCard where cardID= %s) order by r_orderID asc limit 10", cardID)
     trendresult=cursor.fetchall()
     print(trendresult)
     return HttpResponse(json.dumps(trendresult))
